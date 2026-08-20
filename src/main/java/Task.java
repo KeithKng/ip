@@ -1,5 +1,5 @@
 /**
- * Represents one task and whether it has been completed.
+ * Represents a to-do task and whether it has been completed.
  */
 public class Task {
     private final String description;
@@ -41,10 +41,10 @@ public class Task {
     /**
      * Returns this task in the format displayed by the command-line application.
      *
-     * @return a status marker followed by the task description
+     * @return the task type marker, status marker, and description
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[T][" + getStatusIcon() + "] " + description;
     }
 }

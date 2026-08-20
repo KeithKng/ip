@@ -7,47 +7,54 @@
 - The expected-output blocks below contain a command's response body. The runner
   also records the surrounding divider lines in its console transcript.
 
-## Test case: Mark and unmark tasks
+## Test case: Add, mark, and unmark to-do tasks
 
 ### Aim
 
-Verify that tasks can be marked done, returned to not done, and displayed with the
-correct status markers.
+Verify that the `todo` command adds an incomplete to-do task and that to-do tasks
+can be marked done, returned to not done, and displayed with the correct type and
+status markers.
 
 #### Command
 
 ```text
-read book
+todo read book
 ```
 
 #### Expected output
 
 ```text
-added: read book
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
 ```
 
 #### Command
 
 ```text
-return book
+todo return book
 ```
 
 #### Expected output
 
 ```text
-added: return book
+Got it. I've added this task:
+  [T][ ] return book
+Now you have 2 tasks in the list.
 ```
 
 #### Command
 
 ```text
-buy bread
+todo buy bread
 ```
 
 #### Expected output
 
 ```text
-added: buy bread
+Got it. I've added this task:
+  [T][ ] buy bread
+Now you have 3 tasks in the list.
 ```
 
 #### Command
@@ -60,7 +67,7 @@ mark 1
 
 ```text
 Nice! I've marked this task as done:
-  [X] read book
+  [T][X] read book
 ```
 
 #### Command
@@ -73,7 +80,7 @@ mark 2
 
 ```text
 Nice! I've marked this task as done:
-  [X] return book
+  [T][X] return book
 ```
 
 #### Command
@@ -86,7 +93,7 @@ unmark 2
 
 ```text
 OK, I've marked this task as not done yet:
-  [ ] return book
+  [T][ ] return book
 ```
 
 #### Command
@@ -99,9 +106,9 @@ list
 
 ```text
 Here are the tasks in your list:
-1.[X] read book
-2.[ ] return book
-3.[ ] buy bread
+1.[T][X] read book
+2.[T][ ] return book
+3.[T][ ] buy bread
 ```
 
 #### Command

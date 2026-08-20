@@ -39,6 +39,8 @@ public class Keef {
                 markTask(command, tasks, taskCount);
             } else if (command.startsWith("unmark ")) {
                 unmarkTask(command, tasks, taskCount);
+            } else if (command.startsWith("todo ")) {
+                taskCount = addTodo(command, tasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
                 tasks[taskCount] = new Task(command);
                 taskCount++;
@@ -48,6 +50,30 @@ public class Keef {
             }
             System.out.println(DIVIDER);
         }
+    }
+
+    /**
+     * Adds the description in a todo command as an incomplete to-do task.
+     *
+     * @return the updated number of stored tasks
+     */
+    private static int addTodo(String command, Task[] tasks, int taskCount) {
+        String description = command.substring("todo ".length()).trim();
+        if (description.isEmpty()) {
+            System.out.println("Please enter a description after todo.");
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            System.out.println("Sorry, the task list is full.");
+            return taskCount;
+        }
+
+        tasks[taskCount] = new Task(description);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + tasks[taskCount]);
+        taskCount++;
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        return taskCount;
     }
 
     /**
