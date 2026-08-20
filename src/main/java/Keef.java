@@ -38,6 +38,8 @@ public class Keef {
                 printTasks(tasks, completedTasks, taskCount);
             } else if (command.startsWith("mark ")) {
                 markTask(command, tasks, completedTasks, taskCount);
+            } else if (command.startsWith("unmark ")) {
+                unmarkTask(command, tasks, completedTasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
                 tasks[taskCount] = command;
                 taskCount++;
@@ -76,6 +78,26 @@ public class Keef {
             System.out.println("  " + getStatus(completedTasks[taskIndex]) + " " + tasks[taskIndex]);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a task number after mark.");
+        }
+    }
+
+    /**
+     * Marks the one-based task number in an unmark command as incomplete.
+     */
+    private static void unmarkTask(String command, String[] tasks, boolean[] completedTasks, int taskCount) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring("unmark ".length()));
+            if (taskNumber < 1 || taskNumber > taskCount) {
+                System.out.println("Please enter a task number from 1 to " + taskCount + ".");
+                return;
+            }
+
+            int taskIndex = taskNumber - 1;
+            completedTasks[taskIndex] = false;
+            System.out.println("OK, I've marked this task as not done yet:");
+            System.out.println("  " + getStatus(completedTasks[taskIndex]) + " " + tasks[taskIndex]);
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a task number after unmark.");
         }
     }
 
