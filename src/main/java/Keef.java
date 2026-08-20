@@ -43,6 +43,8 @@ public class Keef {
                 taskCount = addTodo(command, tasks, taskCount);
             } else if (command.startsWith("deadline ")) {
                 taskCount = addDeadline(command, tasks, taskCount);
+            } else if (command.startsWith("event ")) {
+                taskCount = addEvent(command, tasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
                 tasks[taskCount] = new Task(command);
                 taskCount++;
@@ -103,6 +105,40 @@ public class Keef {
         }
 
         tasks[taskCount] = new Task(description, by);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + tasks[taskCount]);
+        taskCount++;
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        return taskCount;
+    }
+
+    /**
+     * Adds the description, start text, and end text in an event command.
+     *
+     * @return the updated number of stored tasks
+     */
+    private static int addEvent(String command, Task[] tasks, int taskCount) {
+        String details = command.substring("event ".length()).trim();
+        int fromMarkerIndex = details.indexOf(" /from ");
+        int toMarkerIndex = details.indexOf(" /to ");
+        if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex < fromMarkerIndex) {
+            System.out.println("Please specify an event using /from and /to.");
+            return taskCount;
+        }
+
+        String description = details.substring(0, fromMarkerIndex).trim();
+        String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
+        String to = details.substring(toMarkerIndex + " /to ".length()).trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            System.out.println("Please provide an event description, start, and end time.");
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            System.out.println("Sorry, the task list is full.");
+            return taskCount;
+        }
+
+        tasks[taskCount] = new Task(description, from, to);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount]);
         taskCount++;

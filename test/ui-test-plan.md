@@ -123,6 +123,67 @@ bye
 Bye. Hope to see you again soon!
 ```
 
+## Test case: Add and list events
+
+### Aim
+
+Verify that the `event` command stores its description, `/from` text, and `/to` text
+without interpreting the dates or times.
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+event orientation week /from 4/10/2019 /to 11/10/2019
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
 ## Test case: Add and list deadlines
 
 ### Aim
