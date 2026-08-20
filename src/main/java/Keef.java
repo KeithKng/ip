@@ -35,18 +35,21 @@ public class Keef {
 
             if (command.equals("list")) {
                 printTasks(tasks, taskCount);
-            } else if (command.startsWith("mark ")) {
+            } else if (command.equals("mark") || command.startsWith("mark ")) {
                 markTask(command, tasks, taskCount);
-            } else if (command.startsWith("unmark ")) {
+            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                 unmarkTask(command, tasks, taskCount);
             } else if (command.equals("todo") || command.startsWith("todo ")) {
                 taskCount = addTodo(command, tasks, taskCount);
-            } else if (command.startsWith("deadline ")) {
+            } else if (command.equals("deadline") || command.startsWith("deadline ")) {
                 taskCount = addDeadline(command, tasks, taskCount);
-            } else if (command.startsWith("event ")) {
+            } else if (command.equals("event") || command.startsWith("event ")) {
                 taskCount = addEvent(command, tasks, taskCount);
+            } else if (command.trim().isEmpty()) {
+                printError("No command was entered.", "Enter a command such as: todo read a book");
             } else {
-                System.out.println("I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.");
+                printError("I don't recognise that command.",
+                        "Use todo, deadline, event, list, mark, unmark, or bye.");
             }
             System.out.println(DIVIDER);
         }
@@ -60,11 +63,11 @@ public class Keef {
     private static int addTodo(String command, Task[] tasks, int taskCount) {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            System.out.println("A to-do needs a description. For example: todo read a book");
+            printError("A to-do needs a description.", "Enter: todo read a book");
             return taskCount;
         }
         if (taskCount >= MAX_TASKS) {
-            System.out.println("Sorry, the task list is full.");
+            printError("The task list is full.", "Remove a task before adding another one.");
             return taskCount;
         }
 
@@ -82,21 +85,28 @@ public class Keef {
      * @return the updated number of stored tasks
      */
     private static int addDeadline(String command, Task[] tasks, int taskCount) {
-        String details = command.substring("deadline ".length()).trim();
-        int byMarkerIndex = details.indexOf(" /by ");
+        String details = command.substring("deadline".length()).trim();
+        int byMarkerIndex = findMarker(details, "/by");
         if (byMarkerIndex < 0) {
-            System.out.println("Please specify a deadline using /by.");
+            printError("A deadline needs a /by date or time.",
+                    "Enter: deadline return book /by Sunday");
             return taskCount;
         }
 
         String description = details.substring(0, byMarkerIndex).trim();
-        String by = details.substring(byMarkerIndex + " /by ".length()).trim();
-        if (description.isEmpty() || by.isEmpty()) {
-            System.out.println("Please provide both a description and a deadline after /by.");
+        String by = details.substring(byMarkerIndex + "/by".length()).trim();
+        if (description.isEmpty()) {
+            printError("The deadline description is missing.",
+                    "Enter: deadline return book /by Sunday");
+            return taskCount;
+        }
+        if (by.isEmpty()) {
+            printError("The deadline date or time is missing.",
+                    "Add a value after /by, for example: deadline return book /by Sunday");
             return taskCount;
         }
         if (taskCount >= MAX_TASKS) {
-            System.out.println("Sorry, the task list is full.");
+            printError("The task list is full.", "Remove a task before adding another one.");
             return taskCount;
         }
 
@@ -114,23 +124,44 @@ public class Keef {
      * @return the updated number of stored tasks
      */
     private static int addEvent(String command, Task[] tasks, int taskCount) {
-        String details = command.substring("event ".length()).trim();
-        int fromMarkerIndex = details.indexOf(" /from ");
-        int toMarkerIndex = details.indexOf(" /to ");
-        if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex < fromMarkerIndex) {
-            System.out.println("Please specify an event using /from and /to.");
+        String details = command.substring("event".length()).trim();
+        int fromMarkerIndex = findMarker(details, "/from");
+        int toMarkerIndex = findMarker(details, "/to");
+        if (fromMarkerIndex < 0) {
+            printError("An event needs a /from start time.",
+                    "Enter: event project meeting /from Mon 2pm /to 4pm");
+            return taskCount;
+        }
+        if (toMarkerIndex < 0) {
+            printError("An event needs a /to end time.",
+                    "Enter: event project meeting /from Mon 2pm /to 4pm");
+            return taskCount;
+        }
+        if (toMarkerIndex < fromMarkerIndex) {
+            printError("The /from time must come before the /to time.",
+                    "Enter: event project meeting /from Mon 2pm /to 4pm");
             return taskCount;
         }
 
         String description = details.substring(0, fromMarkerIndex).trim();
-        String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
-        String to = details.substring(toMarkerIndex + " /to ".length()).trim();
-        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            System.out.println("Please provide an event description, start, and end time.");
+        String from = details.substring(fromMarkerIndex + "/from".length(), toMarkerIndex).trim();
+        String to = details.substring(toMarkerIndex + "/to".length()).trim();
+        if (description.isEmpty()) {
+            printError("The event description is missing.",
+                    "Enter: event project meeting /from Mon 2pm /to 4pm");
+            return taskCount;
+        }
+        if (from.isEmpty()) {
+            printError("The event start time is missing.",
+                    "Add a value after /from.");
+            return taskCount;
+        }
+        if (to.isEmpty()) {
+            printError("The event end time is missing.", "Add a value after /to.");
             return taskCount;
         }
         if (taskCount >= MAX_TASKS) {
-            System.out.println("Sorry, the task list is full.");
+            printError("The task list is full.", "Remove a task before adding another one.");
             return taskCount;
         }
 
@@ -156,40 +187,94 @@ public class Keef {
      * Marks the one-based task number in a mark command as complete.
      */
     private static void markTask(String command, Task[] tasks, int taskCount) {
-        try {
-            int taskNumber = Integer.parseInt(command.substring("mark ".length()));
-            if (taskNumber < 1 || taskNumber > taskCount) {
-                System.out.println("Please enter a task number from 1 to " + taskCount + ".");
-                return;
-            }
-
-            int taskIndex = taskNumber - 1;
-            tasks[taskIndex].markAsDone();
-            System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[taskIndex]);
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a task number after mark.");
+        int taskNumber = readTaskNumber(command.substring("mark".length()).trim(), taskCount, "mark");
+        if (taskNumber == -1) {
+            return;
         }
+
+        int taskIndex = taskNumber - 1;
+        tasks[taskIndex].markAsDone();
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("  " + tasks[taskIndex]);
     }
 
     /**
      * Marks the one-based task number in an unmark command as incomplete.
      */
     private static void unmarkTask(String command, Task[] tasks, int taskCount) {
-        try {
-            int taskNumber = Integer.parseInt(command.substring("unmark ".length()));
-            if (taskNumber < 1 || taskNumber > taskCount) {
-                System.out.println("Please enter a task number from 1 to " + taskCount + ".");
-                return;
-            }
-
-            int taskIndex = taskNumber - 1;
-            tasks[taskIndex].markAsNotDone();
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[taskIndex]);
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a task number after unmark.");
+        int taskNumber = readTaskNumber(command.substring("unmark".length()).trim(), taskCount, "unmark");
+        if (taskNumber == -1) {
+            return;
         }
+
+        int taskIndex = taskNumber - 1;
+        tasks[taskIndex].markAsNotDone();
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println("  " + tasks[taskIndex]);
+    }
+
+    /**
+     * Finds a command marker that is separated from the surrounding text by whitespace.
+     *
+     * @return the marker's first character index, or {@code -1} when it is absent or malformed
+     */
+    private static int findMarker(String details, String marker) {
+        int markerIndex = details.indexOf(marker);
+        if (markerIndex < 0) {
+            return -1;
+        }
+
+        int markerEndIndex = markerIndex + marker.length();
+        boolean hasWhitespaceBefore = markerIndex == 0 || Character.isWhitespace(details.charAt(markerIndex - 1));
+        boolean hasWhitespaceAfter = markerEndIndex == details.length()
+                || Character.isWhitespace(details.charAt(markerEndIndex));
+        return hasWhitespaceBefore && hasWhitespaceAfter ? markerIndex : -1;
+    }
+
+    /**
+     * Validates and reads a one-based task number without relying on exceptions for invalid input.
+     *
+     * @return the valid task number, or {@code -1} if an error message was printed
+     */
+    private static int readTaskNumber(String numberText, int taskCount, String commandName) {
+        if (taskCount == 0) {
+            printError("There are no tasks to " + commandName + ".",
+                    "Add a task first, for example: todo read a book");
+            return -1;
+        }
+
+        if (numberText.isEmpty()) {
+            printError("A task number is required.", "Enter: " + commandName + " 1");
+            return -1;
+        }
+
+        int taskNumber = 0;
+        for (int i = 0; i < numberText.length(); i++) {
+            char character = numberText.charAt(i);
+            if (!Character.isDigit(character)) {
+                printError("The task number must contain digits only.", "Enter: " + commandName + " 1");
+                return -1;
+            }
+            taskNumber = taskNumber * 10 + (character - '0');
+            if (taskNumber > MAX_TASKS) {
+                break;
+            }
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            printError("That task number is not in the list.",
+                    "Enter a number from 1 to " + taskCount + ".");
+            return -1;
+        }
+        return taskNumber;
+    }
+
+    /**
+     * Prints an error message and a correction the user can follow.
+     */
+    private static void printError(String error, String suggestion) {
+        System.out.println("Error: " + error);
+        System.out.println("Try: " + suggestion);
     }
 
 }

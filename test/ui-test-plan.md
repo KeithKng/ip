@@ -7,12 +7,12 @@
 - The expected-output blocks below contain a command's response body. The runner
   also records the surrounding divider lines in its console transcript.
 
-## Test case: Report minimal input errors
+## Test case: Report input errors
 
 ### Aim
 
-Verify that the chatbot explains how to correct an empty `todo` command and does
-not treat an unrecognised command as a task.
+Verify that the chatbot gives an error and a correction for every invalid command
+form supported by the current version.
 
 #### Command
 
@@ -23,7 +23,8 @@ todo
 #### Expected output
 
 ```text
-A to-do needs a description. For example: todo read a book
+Error: A to-do needs a description.
+Try: Enter: todo read a book
 ```
 
 #### Command
@@ -35,7 +36,8 @@ blah
 #### Expected output
 
 ```text
-I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.
+Error: I don't recognise that command.
+Try: Use todo, deadline, event, list, mark, unmark, or bye.
 ```
 
 #### Command
