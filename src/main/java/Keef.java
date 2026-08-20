@@ -41,6 +41,8 @@ public class Keef {
                 unmarkTask(command, tasks, taskCount);
             } else if (command.startsWith("todo ")) {
                 taskCount = addTodo(command, tasks, taskCount);
+            } else if (command.startsWith("deadline ")) {
+                taskCount = addDeadline(command, tasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
                 tasks[taskCount] = new Task(command);
                 taskCount++;
@@ -69,6 +71,38 @@ public class Keef {
         }
 
         tasks[taskCount] = new Task(description);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + tasks[taskCount]);
+        taskCount++;
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        return taskCount;
+    }
+
+    /**
+     * Adds the description and due text in a deadline command as an incomplete deadline.
+     *
+     * @return the updated number of stored tasks
+     */
+    private static int addDeadline(String command, Task[] tasks, int taskCount) {
+        String details = command.substring("deadline ".length()).trim();
+        int byMarkerIndex = details.indexOf(" /by ");
+        if (byMarkerIndex < 0) {
+            System.out.println("Please specify a deadline using /by.");
+            return taskCount;
+        }
+
+        String description = details.substring(0, byMarkerIndex).trim();
+        String by = details.substring(byMarkerIndex + " /by ".length()).trim();
+        if (description.isEmpty() || by.isEmpty()) {
+            System.out.println("Please provide both a description and a deadline after /by.");
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            System.out.println("Sorry, the task list is full.");
+            return taskCount;
+        }
+
+        tasks[taskCount] = new Task(description, by);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount]);
         taskCount++;

@@ -1,8 +1,9 @@
 /**
- * Represents a to-do task and whether it has been completed.
+ * Represents a task and whether it has been completed.
  */
 public class Task {
-    private final String description;
+    protected final String description;
+    private final String deadline;
     private boolean isDone;
 
     /**
@@ -12,6 +13,21 @@ public class Task {
      */
     public Task(String description) {
         this.description = description;
+        this.deadline = null;
+        this.isDone = false;
+    }
+
+    /**
+     * Creates an incomplete deadline task with the given description and due text.
+     * This temporary representation will be replaced by a Deadline subclass in the
+     * inheritance extension.
+     *
+     * @param description text describing the task
+     * @param deadline date or time by which the task must be completed
+     */
+    public Task(String description, String deadline) {
+        this.description = description;
+        this.deadline = deadline;
         this.isDone = false;
     }
 
@@ -41,10 +57,13 @@ public class Task {
     /**
      * Returns this task in the format displayed by the command-line application.
      *
-     * @return the task type marker, status marker, and description
+     * @return the task type marker, status marker, description, and deadline when present
      */
     @Override
     public String toString() {
-        return "[T][" + getStatusIcon() + "] " + description;
+        if (deadline == null) {
+            return "[T][" + getStatusIcon() + "] " + description;
+        }
+        return "[D][" + getStatusIcon() + "] " + description + " (by: " + deadline + ")";
     }
 }

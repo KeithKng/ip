@@ -122,3 +122,64 @@ bye
 ```text
 Bye. Hope to see you again soon!
 ```
+
+## Test case: Add and list deadlines
+
+### Aim
+
+Verify that the `deadline` command stores its description and `/by` text without
+interpreting the date or time.
+
+#### Command
+
+```text
+deadline return book /by Sunday
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+deadline do homework /by no idea :-p
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] do homework (by: no idea :-p)
+Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+1.[D][ ] return book (by: Sunday)
+2.[D][ ] do homework (by: no idea :-p)
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
