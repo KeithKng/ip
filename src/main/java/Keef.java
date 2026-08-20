@@ -21,8 +21,7 @@ public class Keef {
         System.out.println(DIVIDER);
 
         Scanner input = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
-        boolean[] completedTasks = new boolean[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
         while (input.hasNextLine()) {
             String command = input.nextLine();
@@ -35,13 +34,13 @@ public class Keef {
             }
 
             if (command.equals("list")) {
-                printTasks(tasks, completedTasks, taskCount);
+                printTasks(tasks, taskCount);
             } else if (command.startsWith("mark ")) {
-                markTask(command, tasks, completedTasks, taskCount);
+                markTask(command, tasks, taskCount);
             } else if (command.startsWith("unmark ")) {
-                unmarkTask(command, tasks, completedTasks, taskCount);
+                unmarkTask(command, tasks, taskCount);
             } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = command;
+                tasks[taskCount] = new Task(command);
                 taskCount++;
                 System.out.println("added: " + command);
             } else {
@@ -54,17 +53,17 @@ public class Keef {
     /**
      * Prints every task and its completion status.
      */
-    private static void printTasks(String[] tasks, boolean[] completedTasks, int taskCount) {
+    private static void printTasks(Task[] tasks, int taskCount) {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + getStatus(completedTasks[i]) + " " + tasks[i]);
+            System.out.println((i + 1) + "." + tasks[i]);
         }
     }
 
     /**
      * Marks the one-based task number in a mark command as complete.
      */
-    private static void markTask(String command, String[] tasks, boolean[] completedTasks, int taskCount) {
+    private static void markTask(String command, Task[] tasks, int taskCount) {
         try {
             int taskNumber = Integer.parseInt(command.substring("mark ".length()));
             if (taskNumber < 1 || taskNumber > taskCount) {
@@ -73,9 +72,9 @@ public class Keef {
             }
 
             int taskIndex = taskNumber - 1;
-            completedTasks[taskIndex] = true;
+            tasks[taskIndex].markAsDone();
             System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + getStatus(completedTasks[taskIndex]) + " " + tasks[taskIndex]);
+            System.out.println("  " + tasks[taskIndex]);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a task number after mark.");
         }
@@ -84,7 +83,7 @@ public class Keef {
     /**
      * Marks the one-based task number in an unmark command as incomplete.
      */
-    private static void unmarkTask(String command, String[] tasks, boolean[] completedTasks, int taskCount) {
+    private static void unmarkTask(String command, Task[] tasks, int taskCount) {
         try {
             int taskNumber = Integer.parseInt(command.substring("unmark ".length()));
             if (taskNumber < 1 || taskNumber > taskCount) {
@@ -93,18 +92,12 @@ public class Keef {
             }
 
             int taskIndex = taskNumber - 1;
-            completedTasks[taskIndex] = false;
+            tasks[taskIndex].markAsNotDone();
             System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + getStatus(completedTasks[taskIndex]) + " " + tasks[taskIndex]);
+            System.out.println("  " + tasks[taskIndex]);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a task number after unmark.");
         }
     }
 
-    /**
-     * Returns the display marker for a task's completion state.
-     */
-    private static String getStatus(boolean isCompleted) {
-        return isCompleted ? "[X]" : "[ ]";
-    }
 }
