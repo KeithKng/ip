@@ -72,7 +72,7 @@ public class Keef {
             return taskCount;
         }
 
-        tasks[taskCount] = new Task(description);
+        tasks[taskCount] = new Todo(description);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount]);
         taskCount++;
@@ -104,7 +104,7 @@ public class Keef {
             return taskCount;
         }
 
-        tasks[taskCount] = new Task(description, by);
+        tasks[taskCount] = new Deadline(description, by);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount]);
         taskCount++;
@@ -138,7 +138,7 @@ public class Keef {
             return taskCount;
         }
 
-        tasks[taskCount] = new Task(description, from, to);
+        tasks[taskCount] = new Event(description, from, to);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount]);
         taskCount++;

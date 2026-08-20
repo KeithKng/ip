@@ -1,11 +1,8 @@
 /**
- * Represents a task and whether it has been completed.
+ * Represents the information shared by every task type.
  */
 public class Task {
     protected final String description;
-    private final String deadline;
-    private final String from;
-    private final String to;
     private boolean isDone;
 
     /**
@@ -15,42 +12,6 @@ public class Task {
      */
     public Task(String description) {
         this.description = description;
-        this.deadline = null;
-        this.from = null;
-        this.to = null;
-        this.isDone = false;
-    }
-
-    /**
-     * Creates an incomplete deadline task with the given description and due text.
-     * This temporary representation will be replaced by a Deadline subclass in the
-     * inheritance extension.
-     *
-     * @param description text describing the task
-     * @param deadline date or time by which the task must be completed
-     */
-    public Task(String description, String deadline) {
-        this.description = description;
-        this.deadline = deadline;
-        this.from = null;
-        this.to = null;
-        this.isDone = false;
-    }
-
-    /**
-     * Creates an incomplete event task with the given description, start, and end text.
-     * This temporary representation will be replaced by an Event subclass in the
-     * inheritance extension.
-     *
-     * @param description text describing the event
-     * @param from date or time at which the event starts
-     * @param to date or time at which the event ends
-     */
-    public Task(String description, String from, String to) {
-        this.description = description;
-        this.deadline = null;
-        this.from = from;
-        this.to = to;
         this.isDone = false;
     }
 
@@ -78,19 +39,13 @@ public class Task {
     }
 
     /**
-     * Returns this task in the format displayed by the command-line application.
+     * Returns the common status and description portion of a task display.
+     * Subclasses prepend their task-type marker and append any scheduling details.
      *
-     * @return the task type marker, status marker, description, and schedule when present
+     * @return status marker followed by the task description
      */
     @Override
     public String toString() {
-        if (deadline != null) {
-            return "[D][" + getStatusIcon() + "] " + description + " (by: " + deadline + ")";
-        }
-        if (from != null) {
-            return "[E][" + getStatusIcon() + "] " + description
-                    + " (from: " + from + " to: " + to + ")";
-        }
-        return "[T][" + getStatusIcon() + "] " + description;
+        return "[" + getStatusIcon() + "] " + description;
     }
 }
