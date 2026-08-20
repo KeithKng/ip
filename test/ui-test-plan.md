@@ -37,7 +37,7 @@ blah
 
 ```text
 Error: I don't recognise that command.
-Try: Use todo, deadline, event, list, mark, unmark, or bye.
+Try: Use todo, deadline, event, list, mark, unmark, delete, or bye.
 ```
 
 #### Command
@@ -186,6 +186,19 @@ Try: Add a task first, for example: todo read a book
 #### Command
 
 ```text
+delete
+```
+
+#### Expected output
+
+```text
+Error: There are no tasks to delete.
+Try: Add a task first, for example: todo read a book
+```
+
+#### Command
+
+```text
 todo read book
 ```
 
@@ -234,6 +247,134 @@ mark 2
 ```text
 Error: That task number is not in the list.
 Try: Enter a number from 1 to 1.
+```
+
+#### Command
+
+```text
+delete
+```
+
+#### Expected output
+
+```text
+Error: A task number is required.
+Try: Enter: delete 1
+```
+
+#### Command
+
+```text
+delete one
+```
+
+#### Expected output
+
+```text
+Error: The task number must contain digits only.
+Try: Enter: delete 1
+```
+
+#### Command
+
+```text
+delete 2
+```
+
+#### Expected output
+
+```text
+Error: That task number is not in the list.
+Try: Enter a number from 1 to 1.
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
+## Test case: Delete a task
+
+### Aim
+
+Verify that the `delete` command removes the specified task and renumbers the
+remaining tasks consecutively.
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+deadline return book /by Sunday
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
+```
+
+#### Command
+
+```text
+delete 2
+```
+
+#### Expected output
+
+```text
+Noted. I've removed this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
 ```
 
 #### Command

@@ -40,6 +40,8 @@ public class Keef {
                     markTask(command, tasks, taskCount);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     unmarkTask(command, tasks, taskCount);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    taskCount = deleteTask(command, tasks, taskCount);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
                     taskCount = addTodo(command, tasks, taskCount);
                 } else if (command.equals("deadline") || command.startsWith("deadline ")) {
@@ -51,7 +53,7 @@ public class Keef {
                             "Enter a command such as: todo read a book");
                 } else {
                     throw new KeefException("I don't recognise that command.",
-                            "Use todo, deadline, event, list, mark, unmark, or bye.");
+                            "Use todo, deadline, event, list, mark, unmark, delete, or bye.");
                 }
             } catch (KeefException e) {
                 System.out.println(e.getUserMessage());
@@ -194,6 +196,28 @@ public class Keef {
         tasks[taskIndex].markAsNotDone();
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + tasks[taskIndex]);
+    }
+
+    /**
+     * Removes the task specified by the one-based task number in a delete command.
+     * Remaining tasks are shifted left so that list numbering stays consecutive.
+     *
+     * @return the updated number of stored tasks
+     */
+    private static int deleteTask(String command, Task[] tasks, int taskCount) throws KeefException {
+        int taskNumber = readTaskNumber(command.substring("delete".length()).trim(), taskCount, "delete");
+        int taskIndex = taskNumber - 1;
+        Task removedTask = tasks[taskIndex];
+        for (int i = taskIndex; i < taskCount - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        tasks[taskCount - 1] = null;
+        taskCount--;
+
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        return taskCount;
     }
 
     /**
