@@ -25,35 +25,34 @@ public class Keef {
         List<Task> tasks = new ArrayList<>();
         while (input.hasNextLine()) {
             String command = input.nextLine();
+            Command commandType = Command.fromInput(command);
             System.out.println(DIVIDER);
 
-            if (command.equals("bye")) {
+            if (commandType == Command.BYE) {
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.println(DIVIDER);
                 break;
             }
 
             try {
-                if (command.equals("list")) {
-                    printTasks(tasks);
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    markTask(command, tasks);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    unmarkTask(command, tasks);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    deleteTask(command, tasks);
-                } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    addTodo(command, tasks);
-                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    addDeadline(command, tasks);
-                } else if (command.equals("event") || command.startsWith("event ")) {
-                    addEvent(command, tasks);
-                } else if (command.trim().isEmpty()) {
+                if (commandType == null && command.trim().isEmpty()) {
                     throw new KeefException("No command was entered.",
                             "Enter a command such as: todo read a book");
-                } else {
+                }
+                if (commandType == null) {
                     throw new KeefException("I don't recognise that command.",
                             "Use todo, deadline, event, list, mark, unmark, delete, or bye.");
+                }
+
+                switch (commandType) {
+                case TODO -> addTodo(command, tasks);
+                case DEADLINE -> addDeadline(command, tasks);
+                case EVENT -> addEvent(command, tasks);
+                case LIST -> printTasks(tasks);
+                case MARK -> markTask(command, tasks);
+                case UNMARK -> unmarkTask(command, tasks);
+                case DELETE -> deleteTask(command, tasks);
+                case BYE -> throw new IllegalStateException("The bye command is handled before dispatch.");
                 }
             } catch (KeefException e) {
                 System.out.println(e.getUserMessage());
