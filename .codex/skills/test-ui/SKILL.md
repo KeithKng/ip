@@ -29,7 +29,19 @@ program.
    decision instead of inventing an expected output. Keep startup output and fixed
    divider lines out of per-command expectations unless that presentation is itself
    being changed.
-2. Compile the application with Java 25, following the project instructions.
+2. Compile the application with Java 25, following the project instructions. If Java
+   25 is unavailable locally but JDK 26 is installed, compile Java 25-compatible
+   bytecode with JDK 26 instead:
+
+   ```powershell
+   javac --release 25 -d out src/main/java/*.java
+   ```
+
+   Confirm the resulting classes use Java 25's class-file version (69), for example:
+
+   ```powershell
+   javap -verbose out/Keef.class | Select-String 'major version'
+   ```
 3. Run the plan from the repository root:
 
    ```powershell
@@ -37,6 +49,14 @@ program.
    ```
 
    Supply `-RunCommand` only when the plan's default command needs to be overridden.
+   In the JDK 26 fallback, provide its `java.exe` explicitly: `PATH` may resolve to
+   an older Java runtime that cannot run Java 25 bytecode. For example, derive the
+   runtime beside the selected `javac` and run:
+
+   ```powershell
+   $java26 = Join-Path (Split-Path (Get-Command javac).Source) 'java.exe'
+   .\.codex\skills\test-ui\scripts\run-ui-tests.ps1 -RunCommand ('"{0}" -cp out Keef' -f $java26)
+   ```
 4. Preserve the runner's console-session record in the response. On the first failed
    command it stops the process and prints both the expected and actual output; do not
    continue with later test cases.
