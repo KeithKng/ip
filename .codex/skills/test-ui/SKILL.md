@@ -12,6 +12,23 @@ program.
 1. Update the plan first if the change adds or alters observable command behavior.
    Each test case must state its aim and provide one or more command/expected-output
    pairs.
+   When adding or revising command cases, keep the plan proportionate to the
+   application's supported behavior and consider these coverage areas:
+
+   - empty-state behavior, including commands that display or modify an empty list;
+   - missing, non-numeric, and out-of-range task numbers for both `mark` and
+     `unmark` when those commands are available;
+   - malformed command names and malformed required markers, especially where the
+     parser requires whitespace around a command or marker;
+   - leading, trailing, or repeated whitespace when input normalization is
+     supported; and
+   - documented boundary behavior, such as a maximum task capacity.
+
+   Test duplicate markers or similarly ambiguous input when the application defines
+   a clear intended result. If behavior is not specified, report it as a product
+   decision instead of inventing an expected output. Keep startup output and fixed
+   divider lines out of per-command expectations unless that presentation is itself
+   being changed.
 2. Compile the application with Java 25, following the project instructions.
 3. Run the plan from the repository root:
 
