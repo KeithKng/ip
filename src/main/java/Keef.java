@@ -39,18 +39,14 @@ public class Keef {
                 markTask(command, tasks, taskCount);
             } else if (command.startsWith("unmark ")) {
                 unmarkTask(command, tasks, taskCount);
-            } else if (command.startsWith("todo ")) {
+            } else if (command.equals("todo") || command.startsWith("todo ")) {
                 taskCount = addTodo(command, tasks, taskCount);
             } else if (command.startsWith("deadline ")) {
                 taskCount = addDeadline(command, tasks, taskCount);
             } else if (command.startsWith("event ")) {
                 taskCount = addEvent(command, tasks, taskCount);
-            } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = new Task(command);
-                taskCount++;
-                System.out.println("added: " + command);
             } else {
-                System.out.println("Sorry, the task list is full.");
+                System.out.println("I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.");
             }
             System.out.println(DIVIDER);
         }
@@ -62,9 +58,9 @@ public class Keef {
      * @return the updated number of stored tasks
      */
     private static int addTodo(String command, Task[] tasks, int taskCount) {
-        String description = command.substring("todo ".length()).trim();
+        String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            System.out.println("Please enter a description after todo.");
+            System.out.println("A to-do needs a description. For example: todo read a book");
             return taskCount;
         }
         if (taskCount >= MAX_TASKS) {
