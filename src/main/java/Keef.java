@@ -1,10 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
- * A small command-line task list that stores up to {@value #MAX_TASKS} tasks.
+ * A small command-line task list backed by a dynamically sized collection.
  */
 public class Keef {
-    private static final int MAX_TASKS = 100;
     private static final String DIVIDER = "____________________________________________________________";
 
    public static void main(String[] args) {
@@ -21,8 +22,7 @@ public class Keef {
         System.out.println(DIVIDER);
 
         Scanner input = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
         while (input.hasNextLine()) {
             String command = input.nextLine();
             System.out.println(DIVIDER);
@@ -35,19 +35,19 @@ public class Keef {
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks, taskCount);
+                    printTasks(tasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    markTask(command, tasks, taskCount);
+                    markTask(command, tasks);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    unmarkTask(command, tasks, taskCount);
+                    unmarkTask(command, tasks);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    taskCount = deleteTask(command, tasks, taskCount);
+                    deleteTask(command, tasks);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    taskCount = addTodo(command, tasks, taskCount);
+                    addTodo(command, tasks);
                 } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    taskCount = addDeadline(command, tasks, taskCount);
+                    addDeadline(command, tasks);
                 } else if (command.equals("event") || command.startsWith("event ")) {
-                    taskCount = addEvent(command, tasks, taskCount);
+                    addEvent(command, tasks);
                 } else if (command.trim().isEmpty()) {
                     throw new KeefException("No command was entered.",
                             "Enter a command such as: todo read a book");
@@ -62,34 +62,21 @@ public class Keef {
         }
     }
 
-    /**
-     * Adds the description in a todo command as an incomplete to-do task.
-     *
-     * @return the updated number of stored tasks
-     */
-    private static int addTodo(String command, Task[] tasks, int taskCount) throws KeefException {
+    /** Adds the description in a todo command as an incomplete to-do task. */
+    private static void addTodo(String command, List<Task> tasks) throws KeefException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
             throw new KeefException("A to-do needs a description.", "Enter: todo read a book");
         }
-        if (taskCount >= MAX_TASKS) {
-            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
-        }
-
-        tasks[taskCount] = new Todo(description);
+        Task task = new Todo(description);
+        tasks.add(task);
         System.out.println("Got it. I've added this task:");
-        System.out.println("  " + tasks[taskCount]);
-        taskCount++;
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    /**
-     * Adds the description and due text in a deadline command as an incomplete deadline.
-     *
-     * @return the updated number of stored tasks
-     */
-    private static int addDeadline(String command, Task[] tasks, int taskCount) throws KeefException {
+    /** Adds the description and due text in a deadline command as an incomplete deadline. */
+    private static void addDeadline(String command, List<Task> tasks) throws KeefException {
         String details = command.substring("deadline".length()).trim();
         int byMarkerIndex = findMarker(details, "/by");
         if (byMarkerIndex < 0) {
@@ -107,24 +94,15 @@ public class Keef {
             throw new KeefException("The deadline date or time is missing.",
                     "Add a value after /by, for example: deadline return book /by Sunday");
         }
-        if (taskCount >= MAX_TASKS) {
-            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
-        }
-
-        tasks[taskCount] = new Deadline(description, by);
+        Task task = new Deadline(description, by);
+        tasks.add(task);
         System.out.println("Got it. I've added this task:");
-        System.out.println("  " + tasks[taskCount]);
-        taskCount++;
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    /**
-     * Adds the description, start text, and end text in an event command.
-     *
-     * @return the updated number of stored tasks
-     */
-    private static int addEvent(String command, Task[] tasks, int taskCount) throws KeefException {
+    /** Adds the description, start text, and end text in an event command. */
+    private static void addEvent(String command, List<Task> tasks) throws KeefException {
         String details = command.substring("event".length()).trim();
         int fromMarkerIndex = findMarker(details, "/from");
         int toMarkerIndex = findMarker(details, "/to");
@@ -154,70 +132,59 @@ public class Keef {
         if (to.isEmpty()) {
             throw new KeefException("The event end time is missing.", "Add a value after /to.");
         }
-        if (taskCount >= MAX_TASKS) {
-            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
-        }
-
-        tasks[taskCount] = new Event(description, from, to);
+        Task task = new Event(description, from, to);
+        tasks.add(task);
         System.out.println("Got it. I've added this task:");
-        System.out.println("  " + tasks[taskCount]);
-        taskCount++;
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
      * Prints every task and its completion status.
      */
-    private static void printTasks(Task[] tasks, int taskCount) {
+    private static void printTasks(List<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
     }
 
     /**
      * Marks the one-based task number in a mark command as complete.
      */
-    private static void markTask(String command, Task[] tasks, int taskCount) throws KeefException {
-        int taskNumber = readTaskNumber(command.substring("mark".length()).trim(), taskCount, "mark");
+    private static void markTask(String command, List<Task> tasks) throws KeefException {
+        int taskNumber = readTaskNumber(command.substring("mark".length()).trim(), tasks.size(), "mark");
         int taskIndex = taskNumber - 1;
-        tasks[taskIndex].markAsDone();
+        Task task = tasks.get(taskIndex);
+        task.markAsDone();
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + task);
     }
 
     /**
      * Marks the one-based task number in an unmark command as incomplete.
      */
-    private static void unmarkTask(String command, Task[] tasks, int taskCount) throws KeefException {
-        int taskNumber = readTaskNumber(command.substring("unmark".length()).trim(), taskCount, "unmark");
+    private static void unmarkTask(String command, List<Task> tasks) throws KeefException {
+        int taskNumber = readTaskNumber(command.substring("unmark".length()).trim(), tasks.size(), "unmark");
         int taskIndex = taskNumber - 1;
-        tasks[taskIndex].markAsNotDone();
+        Task task = tasks.get(taskIndex);
+        task.markAsNotDone();
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + task);
     }
 
     /**
      * Removes the task specified by the one-based task number in a delete command.
-     * Remaining tasks are shifted left so that list numbering stays consecutive.
-     *
-     * @return the updated number of stored tasks
+     * The collection closes the gap automatically, so list numbering stays consecutive.
      */
-    private static int deleteTask(String command, Task[] tasks, int taskCount) throws KeefException {
-        int taskNumber = readTaskNumber(command.substring("delete".length()).trim(), taskCount, "delete");
+    private static void deleteTask(String command, List<Task> tasks) throws KeefException {
+        int taskNumber = readTaskNumber(command.substring("delete".length()).trim(), tasks.size(), "delete");
         int taskIndex = taskNumber - 1;
-        Task removedTask = tasks[taskIndex];
-        for (int i = taskIndex; i < taskCount - 1; i++) {
-            tasks[i] = tasks[i + 1];
-        }
-        tasks[taskCount - 1] = null;
-        taskCount--;
+        Task removedTask = tasks.remove(taskIndex);
 
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -260,10 +227,11 @@ public class Keef {
                 throw new KeefException("The task number must contain digits only.",
                         "Enter: " + commandName + " 1");
             }
-            taskNumber = taskNumber * 10 + (character - '0');
-            if (taskNumber > MAX_TASKS) {
-                break;
+            if (taskNumber > (Integer.MAX_VALUE - (character - '0')) / 10) {
+                throw new KeefException("That task number is not in the list.",
+                        "Enter a number from 1 to " + taskCount + ".");
             }
+            taskNumber = taskNumber * 10 + (character - '0');
         }
 
         if (taskNumber < 1 || taskNumber > taskCount) {
