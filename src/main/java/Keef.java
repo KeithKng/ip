@@ -33,23 +33,28 @@ public class Keef {
                 break;
             }
 
-            if (command.equals("list")) {
-                printTasks(tasks, taskCount);
-            } else if (command.equals("mark") || command.startsWith("mark ")) {
-                markTask(command, tasks, taskCount);
-            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                unmarkTask(command, tasks, taskCount);
-            } else if (command.equals("todo") || command.startsWith("todo ")) {
-                taskCount = addTodo(command, tasks, taskCount);
-            } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                taskCount = addDeadline(command, tasks, taskCount);
-            } else if (command.equals("event") || command.startsWith("event ")) {
-                taskCount = addEvent(command, tasks, taskCount);
-            } else if (command.trim().isEmpty()) {
-                printError("No command was entered.", "Enter a command such as: todo read a book");
-            } else {
-                printError("I don't recognise that command.",
-                        "Use todo, deadline, event, list, mark, unmark, or bye.");
+            try {
+                if (command.equals("list")) {
+                    printTasks(tasks, taskCount);
+                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                    markTask(command, tasks, taskCount);
+                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                    unmarkTask(command, tasks, taskCount);
+                } else if (command.equals("todo") || command.startsWith("todo ")) {
+                    taskCount = addTodo(command, tasks, taskCount);
+                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+                    taskCount = addDeadline(command, tasks, taskCount);
+                } else if (command.equals("event") || command.startsWith("event ")) {
+                    taskCount = addEvent(command, tasks, taskCount);
+                } else if (command.trim().isEmpty()) {
+                    throw new KeefException("No command was entered.",
+                            "Enter a command such as: todo read a book");
+                } else {
+                    throw new KeefException("I don't recognise that command.",
+                            "Use todo, deadline, event, list, mark, unmark, or bye.");
+                }
+            } catch (KeefException e) {
+                System.out.println(e.getUserMessage());
             }
             System.out.println(DIVIDER);
         }
@@ -60,15 +65,13 @@ public class Keef {
      *
      * @return the updated number of stored tasks
      */
-    private static int addTodo(String command, Task[] tasks, int taskCount) {
+    private static int addTodo(String command, Task[] tasks, int taskCount) throws KeefException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            printError("A to-do needs a description.", "Enter: todo read a book");
-            return taskCount;
+            throw new KeefException("A to-do needs a description.", "Enter: todo read a book");
         }
         if (taskCount >= MAX_TASKS) {
-            printError("The task list is full.", "Remove a task before adding another one.");
-            return taskCount;
+            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
         }
 
         tasks[taskCount] = new Todo(description);
@@ -84,30 +87,26 @@ public class Keef {
      *
      * @return the updated number of stored tasks
      */
-    private static int addDeadline(String command, Task[] tasks, int taskCount) {
+    private static int addDeadline(String command, Task[] tasks, int taskCount) throws KeefException {
         String details = command.substring("deadline".length()).trim();
         int byMarkerIndex = findMarker(details, "/by");
         if (byMarkerIndex < 0) {
-            printError("A deadline needs a /by date or time.",
+            throw new KeefException("A deadline needs a /by date or time.",
                     "Enter: deadline return book /by Sunday");
-            return taskCount;
         }
 
         String description = details.substring(0, byMarkerIndex).trim();
         String by = details.substring(byMarkerIndex + "/by".length()).trim();
         if (description.isEmpty()) {
-            printError("The deadline description is missing.",
+            throw new KeefException("The deadline description is missing.",
                     "Enter: deadline return book /by Sunday");
-            return taskCount;
         }
         if (by.isEmpty()) {
-            printError("The deadline date or time is missing.",
+            throw new KeefException("The deadline date or time is missing.",
                     "Add a value after /by, for example: deadline return book /by Sunday");
-            return taskCount;
         }
         if (taskCount >= MAX_TASKS) {
-            printError("The task list is full.", "Remove a task before adding another one.");
-            return taskCount;
+            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
         }
 
         tasks[taskCount] = new Deadline(description, by);
@@ -123,46 +122,38 @@ public class Keef {
      *
      * @return the updated number of stored tasks
      */
-    private static int addEvent(String command, Task[] tasks, int taskCount) {
+    private static int addEvent(String command, Task[] tasks, int taskCount) throws KeefException {
         String details = command.substring("event".length()).trim();
         int fromMarkerIndex = findMarker(details, "/from");
         int toMarkerIndex = findMarker(details, "/to");
         if (fromMarkerIndex < 0) {
-            printError("An event needs a /from start time.",
+            throw new KeefException("An event needs a /from start time.",
                     "Enter: event project meeting /from Mon 2pm /to 4pm");
-            return taskCount;
         }
         if (toMarkerIndex < 0) {
-            printError("An event needs a /to end time.",
+            throw new KeefException("An event needs a /to end time.",
                     "Enter: event project meeting /from Mon 2pm /to 4pm");
-            return taskCount;
         }
         if (toMarkerIndex < fromMarkerIndex) {
-            printError("The /from time must come before the /to time.",
+            throw new KeefException("The /from time must come before the /to time.",
                     "Enter: event project meeting /from Mon 2pm /to 4pm");
-            return taskCount;
         }
 
         String description = details.substring(0, fromMarkerIndex).trim();
         String from = details.substring(fromMarkerIndex + "/from".length(), toMarkerIndex).trim();
         String to = details.substring(toMarkerIndex + "/to".length()).trim();
         if (description.isEmpty()) {
-            printError("The event description is missing.",
+            throw new KeefException("The event description is missing.",
                     "Enter: event project meeting /from Mon 2pm /to 4pm");
-            return taskCount;
         }
         if (from.isEmpty()) {
-            printError("The event start time is missing.",
-                    "Add a value after /from.");
-            return taskCount;
+            throw new KeefException("The event start time is missing.", "Add a value after /from.");
         }
         if (to.isEmpty()) {
-            printError("The event end time is missing.", "Add a value after /to.");
-            return taskCount;
+            throw new KeefException("The event end time is missing.", "Add a value after /to.");
         }
         if (taskCount >= MAX_TASKS) {
-            printError("The task list is full.", "Remove a task before adding another one.");
-            return taskCount;
+            throw new KeefException("The task list is full.", "Restart Keef to begin a new task list.");
         }
 
         tasks[taskCount] = new Event(description, from, to);
@@ -186,12 +177,8 @@ public class Keef {
     /**
      * Marks the one-based task number in a mark command as complete.
      */
-    private static void markTask(String command, Task[] tasks, int taskCount) {
+    private static void markTask(String command, Task[] tasks, int taskCount) throws KeefException {
         int taskNumber = readTaskNumber(command.substring("mark".length()).trim(), taskCount, "mark");
-        if (taskNumber == -1) {
-            return;
-        }
-
         int taskIndex = taskNumber - 1;
         tasks[taskIndex].markAsDone();
         System.out.println("Nice! I've marked this task as done:");
@@ -201,12 +188,8 @@ public class Keef {
     /**
      * Marks the one-based task number in an unmark command as incomplete.
      */
-    private static void unmarkTask(String command, Task[] tasks, int taskCount) {
+    private static void unmarkTask(String command, Task[] tasks, int taskCount) throws KeefException {
         int taskNumber = readTaskNumber(command.substring("unmark".length()).trim(), taskCount, "unmark");
-        if (taskNumber == -1) {
-            return;
-        }
-
         int taskIndex = taskNumber - 1;
         tasks[taskIndex].markAsNotDone();
         System.out.println("OK, I've marked this task as not done yet:");
@@ -232,28 +215,26 @@ public class Keef {
     }
 
     /**
-     * Validates and reads a one-based task number without relying on exceptions for invalid input.
+     * Validates and reads a one-based task number.
      *
-     * @return the valid task number, or {@code -1} if an error message was printed
+     * @return the valid task number
      */
-    private static int readTaskNumber(String numberText, int taskCount, String commandName) {
+    private static int readTaskNumber(String numberText, int taskCount, String commandName) throws KeefException {
         if (taskCount == 0) {
-            printError("There are no tasks to " + commandName + ".",
+            throw new KeefException("There are no tasks to " + commandName + ".",
                     "Add a task first, for example: todo read a book");
-            return -1;
         }
 
         if (numberText.isEmpty()) {
-            printError("A task number is required.", "Enter: " + commandName + " 1");
-            return -1;
+            throw new KeefException("A task number is required.", "Enter: " + commandName + " 1");
         }
 
         int taskNumber = 0;
         for (int i = 0; i < numberText.length(); i++) {
             char character = numberText.charAt(i);
             if (!Character.isDigit(character)) {
-                printError("The task number must contain digits only.", "Enter: " + commandName + " 1");
-                return -1;
+                throw new KeefException("The task number must contain digits only.",
+                        "Enter: " + commandName + " 1");
             }
             taskNumber = taskNumber * 10 + (character - '0');
             if (taskNumber > MAX_TASKS) {
@@ -262,19 +243,10 @@ public class Keef {
         }
 
         if (taskNumber < 1 || taskNumber > taskCount) {
-            printError("That task number is not in the list.",
+            throw new KeefException("That task number is not in the list.",
                     "Enter a number from 1 to " + taskCount + ".");
-            return -1;
         }
         return taskNumber;
-    }
-
-    /**
-     * Prints an error message and a correction the user can follow.
-     */
-    private static void printError(String error, String suggestion) {
-        System.out.println("Error: " + error);
-        System.out.println("Try: " + suggestion);
     }
 
 }

@@ -43,6 +43,202 @@ Try: Use todo, deadline, event, list, mark, unmark, or bye.
 #### Command
 
 ```text
+
+```
+
+#### Expected output
+
+```text
+Error: No command was entered.
+Try: Enter a command such as: todo read a book
+```
+
+#### Command
+
+```text
+deadline
+```
+
+#### Expected output
+
+```text
+Error: A deadline needs a /by date or time.
+Try: Enter: deadline return book /by Sunday
+```
+
+#### Command
+
+```text
+deadline /by Sunday
+```
+
+#### Expected output
+
+```text
+Error: The deadline description is missing.
+Try: Enter: deadline return book /by Sunday
+```
+
+#### Command
+
+```text
+deadline return book /by
+```
+
+#### Expected output
+
+```text
+Error: The deadline date or time is missing.
+Try: Add a value after /by, for example: deadline return book /by Sunday
+```
+
+#### Command
+
+```text
+event project meeting /to 4pm
+```
+
+#### Expected output
+
+```text
+Error: An event needs a /from start time.
+Try: Enter: event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm
+```
+
+#### Expected output
+
+```text
+Error: An event needs a /to end time.
+Try: Enter: event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Command
+
+```text
+event project meeting /to 4pm /from Mon 2pm
+```
+
+#### Expected output
+
+```text
+Error: The /from time must come before the /to time.
+Try: Enter: event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Command
+
+```text
+event /from Mon 2pm /to 4pm
+```
+
+#### Expected output
+
+```text
+Error: The event description is missing.
+Try: Enter: event project meeting /from Mon 2pm /to 4pm
+```
+
+#### Command
+
+```text
+event project meeting /from /to 4pm
+```
+
+#### Expected output
+
+```text
+Error: The event start time is missing.
+Try: Add a value after /from.
+```
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm /to
+```
+
+#### Expected output
+
+```text
+Error: The event end time is missing.
+Try: Add a value after /to.
+```
+
+#### Command
+
+```text
+mark
+```
+
+#### Expected output
+
+```text
+Error: There are no tasks to mark.
+Try: Add a task first, for example: todo read a book
+```
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+unmark
+```
+
+#### Expected output
+
+```text
+Error: A task number is required.
+Try: Enter: unmark 1
+```
+
+#### Command
+
+```text
+mark one
+```
+
+#### Expected output
+
+```text
+Error: The task number must contain digits only.
+Try: Enter: mark 1
+```
+
+#### Command
+
+```text
+mark 2
+```
+
+#### Expected output
+
+```text
+Error: That task number is not in the list.
+Try: Enter a number from 1 to 1.
+```
+
+#### Command
+
+```text
 bye
 ```
 
