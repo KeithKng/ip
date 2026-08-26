@@ -21,6 +21,15 @@ public enum Command {
     }
 
     /**
+     * Returns the command keyword used at the start of user input.
+     *
+     * @return command keyword
+     */
+    public String getKeyword() {
+        return keyword;
+    }
+
+    /**
      * Identifies the command at the beginning of an input line.
      *
      * @param input a complete, unnormalised input line
