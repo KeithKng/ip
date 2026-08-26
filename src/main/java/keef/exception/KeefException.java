@@ -1,3 +1,5 @@
+package keef.exception;
+
 /**
  * Represents an invalid command entered into the Keef chatbot.
  */

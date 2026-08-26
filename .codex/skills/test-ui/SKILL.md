@@ -34,13 +34,13 @@ program.
    bytecode with JDK 26 instead:
 
    ```powershell
-   javac --release 25 -d out src/main/java/*.java
+   javac --release 25 -d out (Get-ChildItem -Path src/main/java -Filter *.java -Recurse | ForEach-Object FullName)
    ```
 
    Confirm the resulting classes use Java 25's class-file version (69), for example:
 
    ```powershell
-   javap -verbose out/Keef.class | Select-String 'major version'
+   javap -verbose out/keef/Keef.class | Select-String 'major version'
    ```
 3. Run the plan from the repository root:
 
@@ -55,7 +55,7 @@ program.
 
    ```powershell
    $java26 = Join-Path (Split-Path (Get-Command javac).Source) 'java.exe'
-   .\.codex\skills\test-ui\scripts\run-ui-tests.ps1 -RunCommand ('"{0}" -cp out Keef' -f $java26)
+   .\.codex\skills\test-ui\scripts\run-ui-tests.ps1 -RunCommand ('"{0}" -cp out keef.Keef' -f $java26)
    ```
 4. Preserve the runner's console-session record in the response. On the first failed
    command it stops the process and prints both the expected and actual output; do not

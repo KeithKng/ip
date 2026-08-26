@@ -1,3 +1,5 @@
+package keef.task;
+
 /**
  * Represents the information shared by every task type.
  */

@@ -1,5 +1,18 @@
+package keef;
+
 import java.time.LocalDate;
 import java.util.List;
+
+import keef.command.Command;
+import keef.command.Parser;
+import keef.exception.KeefException;
+import keef.storage.Storage;
+import keef.task.Deadline;
+import keef.task.Event;
+import keef.task.Task;
+import keef.task.TaskList;
+import keef.task.Todo;
+import keef.ui.Ui;
 
 /**
  * Main entry point and coordinator for the Keef task-list application.

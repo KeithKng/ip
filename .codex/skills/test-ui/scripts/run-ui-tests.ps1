@@ -1,6 +1,6 @@
 param(
     [string]$PlanPath = "test/ui-test-plan.md",
-    [string]$RunCommand = "java -cp out Keef"
+    [string]$RunCommand = "java -cp out keef.Keef"
 )
 
 $ErrorActionPreference = "Stop"

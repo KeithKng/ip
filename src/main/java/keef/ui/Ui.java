@@ -1,8 +1,13 @@
+package keef.ui;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import keef.task.Task;
+import keef.task.TaskList;
 
 /**
  * Handles all command-line input and output for the Keef application.

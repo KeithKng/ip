@@ -2,8 +2,8 @@
 
 ## Program
 
-- Compile with Java 25: `javac -d out src/main/java/*.java`
-- Run command: `java -cp out Keef`
+- Compile with Java 25: `javac -d out (Get-ChildItem -Path src/main/java -Filter *.java -Recurse | ForEach-Object FullName)`
+- Run command: `java -cp out keef.Keef`
 - The expected-output blocks below contain a command's response body. The runner
   also records the surrounding divider lines in its console transcript.
 
@@ -14,20 +14,20 @@
 Verify that the chatbot gives an error and a correction for every invalid command
 form supported by the current version.
 
-#### Command
+#### Manual command
 
 ```text
 todo
 ```
 
-#### Expected output
+#### Expected result
 
 ```text
 Error: A to-do needs a description.
 Try: Enter: todo read a book
 ```
 
-#### Command
+#### Manual command
 
 ```text
 blah
@@ -40,13 +40,13 @@ Error: I don't recognise that command.
 Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, or bye.
 ```
 
-#### Command
+#### Manual command
 
 ```text
 
 ```
 
-#### Expected output
+#### Expected result
 
 ```text
 Error: No command was entered.
@@ -117,7 +117,7 @@ deadline submission /by 2019-12-02
 ```text
 Got it. I've added this task:
   [D][ ] submission (by: Dec 02 2019)
-Now you have 1 tasks in the list.
+Now you have 2 tasks in the list.
 ```
 
 #### Command
@@ -207,8 +207,8 @@ mark
 #### Expected output
 
 ```text
-Error: There are no tasks to mark.
-Try: Add a task first, for example: todo read a book
+Error: A task number is required.
+Try: Enter: mark 1
 ```
 
 #### Command
@@ -220,8 +220,8 @@ delete
 #### Expected output
 
 ```text
-Error: There are no tasks to delete.
-Try: Add a task first, for example: todo read a book
+Error: A task number is required.
+Try: Enter: delete 1
 ```
 
 #### Command
@@ -235,7 +235,7 @@ todo read book
 ```text
 Got it. I've added this task:
   [T][ ] read book
-Now you have 1 tasks in the list.
+Now you have 3 tasks in the list.
 ```
 
 #### Command
@@ -267,14 +267,14 @@ Try: Enter: mark 1
 #### Command
 
 ```text
-mark 2
+mark 4
 ```
 
 #### Expected output
 
 ```text
 Error: That task number is not in the list.
-Try: Enter a number from 1 to 1.
+Try: Enter a number from 1 to 3.
 ```
 
 #### Command
@@ -306,14 +306,14 @@ Try: Enter: delete 1
 #### Command
 
 ```text
-delete 2
+delete 4
 ```
 
 #### Expected output
 
 ```text
 Error: That task number is not in the list.
-Try: Enter a number from 1 to 1.
+Try: Enter a number from 1 to 3.
 ```
 
 #### Command
@@ -666,8 +666,6 @@ selected date while ignoring task items unrelated to that date.
 
 ```text
 deadline return book /by 2019-10-15
-event orientation week /from 2019-10-04 /to 2019-10-11
-ondate 2019-10-04
 ```
 
 #### Expected output
@@ -676,9 +674,31 @@ ondate 2019-10-04
 Got it. I've added this task:
   [D][ ] return book (by: Oct 15 2019)
 Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+event orientation week /from 2019-10-04 /to 2019-10-11
+```
+
+#### Expected output
+
+```text
 Got it. I've added this task:
   [E][ ] orientation week (from: 2019-10-04 to: 2019-10-11)
 Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+ondate 2019-10-04
+```
+
+#### Expected output
+
+```text
 Here are the tasks on Oct 04 2019:
 1.[E][ ] orientation week (from: 2019-10-04 to: 2019-10-11)
 ```
@@ -763,13 +783,13 @@ Validate the save/load edge cases that are not covered by the default automated
 runner because the runner clears the `data` directory before each case. These
 checks are intended for a local manual run when verifying file persistence.
 
-#### Command
+#### Manual command
 
 ```text
 list
 ```
 
-#### Expected output
+#### Expected result
 
 ```text
 Here are the tasks in your list:

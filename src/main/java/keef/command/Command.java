@@ -1,3 +1,5 @@
+package keef.command;
+
 /**
  * The commands the Keef task-list application understands.
  */

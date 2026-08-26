@@ -1,8 +1,12 @@
+package keef.command;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
+
+import keef.exception.KeefException;
 
 /**
  * Parses user-entered command text into structured command data.
