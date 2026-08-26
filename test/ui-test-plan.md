@@ -95,6 +95,20 @@ Try: Add a value after /by, for example: deadline return book /by Sunday
 #### Command
 
 ```text
+deadline return book /by 2019-10-15
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Oct 15 2019)
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
 event project meeting /to 4pm
 ```
 
