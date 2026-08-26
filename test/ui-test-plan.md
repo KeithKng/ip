@@ -37,7 +37,7 @@ blah
 
 ```text
 Error: I don't recognise that command.
-Try: Use todo, deadline, event, list, mark, unmark, delete, or bye.
+Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, or bye.
 ```
 
 #### Command
@@ -90,6 +90,34 @@ deadline return book /by
 ```text
 Error: The deadline date or time is missing.
 Try: Add a value after /by, for example: deadline return book /by Sunday
+```
+
+#### Command
+
+```text
+deadline return book /by 2019-10-15
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Oct 15 2019)
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+deadline submission /by 2019-12-02
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] submission (by: Dec 02 2019)
+Now you have 1 tasks in the list.
 ```
 
 #### Command
@@ -613,6 +641,46 @@ list
 Here are the tasks in your list:
 1.[D][ ] return book (by: Sunday)
 2.[D][ ] do homework (by: no idea :-p)
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
+## Test case: Filter tasks by date
+
+### Aim
+
+Verify that the `ondate` command prints the deadlines and events that fall on the
+selected date while ignoring task items unrelated to that date.
+
+#### Command
+
+```text
+deadline return book /by 2019-10-15
+event orientation week /from 2019-10-04 /to 2019-10-11
+ondate 2019-10-04
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Oct 15 2019)
+Now you have 1 tasks in the list.
+Got it. I've added this task:
+  [E][ ] orientation week (from: 2019-10-04 to: 2019-10-11)
+Now you have 2 tasks in the list.
+Here are the tasks on Oct 04 2019:
+1.[E][ ] orientation week (from: 2019-10-04 to: 2019-10-11)
 ```
 
 #### Command

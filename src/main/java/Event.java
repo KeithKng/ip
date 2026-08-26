@@ -1,7 +1,26 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Represents a task that takes place between a specified start and end time.
  */
 public class Event extends Task {
+    private static final List<DateTimeFormatter> DATE_TIME_FORMATTERS = List.of(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("d/M/yyyy HH:mm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("d/M/yyyy HHmm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("d/M/yyyy", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HHmm", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH));
     private final String from;
     private final String to;
 
@@ -16,6 +35,23 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    /**
+     * Checks whether this event occurs on the given date.
+     *
+     * @param targetDate date to check
+     * @return {@code true} when the target date falls within the event interval
+     */
+    public boolean occursOn(LocalDate targetDate) {
+        LocalDateTime start = parseDateTime(from);
+        LocalDateTime end = parseDateTime(to);
+        if (start == null || end == null) {
+            return false;
+        }
+        LocalDate startDate = start.toLocalDate();
+        LocalDate endDate = end.toLocalDate();
+        return !targetDate.isBefore(startDate) && !targetDate.isAfter(endDate);
     }
 
     /**
@@ -37,4 +73,35 @@ public class Event extends Task {
     public String toStorageString() {
         return "E | " + (isDone() ? "1" : "0") + " | " + description + " | " + from + " | " + to;
     }
+
+    private static LocalDateTime parseDateTime(String text) {
+        if (text == null) {
+            return null;
+        }
+        String trimmed = text.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
+            try {
+                return LocalDateTime.parse(trimmed, formatter);
+            } catch (DateTimeParseException ignored) {
+                // fall through to next format
+            }
+        }
+
+        // Some date-only strings are parsed by LocalDate.parse but not LocalDateTime.parse,
+        // so convert them to start-of-day for range comparisons.
+        for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
+            try {
+                LocalDate date = LocalDate.parse(trimmed, formatter);
+                return date.atStartOfDay();
+            } catch (DateTimeParseException ignored) {
+                // fall through to next format
+            }
+        }
+        return null;
+    }
 }
+ 
