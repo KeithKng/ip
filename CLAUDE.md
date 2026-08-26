@@ -3,6 +3,7 @@
 This file records key rules for assistants editing this repository. These are authoritative and must be followed.
 
 - NEVER commit or push changes automatically. Any code or repository change proposed by the assistant must be presented to the user for review and explicit approval before running git commit, git tag, or git push.
+- NEVER run the present-changes-visually skill under any circumstance.
 - When asked to modify files, the assistant may create or edit files in the working tree but must not run git commands to record or publish those changes unless the user explicitly requests that the assistant perform the commit and push.
 - Explain every proposed commit: include the rationale, affected files, and a suggested commit message. Ask for confirmation before committing.
 - After every code or documentation change, always provide a suggested commit message in the repository's preferred style: imperative mood, concise subject line (ideally under 50 characters, hard limit 72), optional scope or category prefix, no trailing period, and a brief body explaining the rationale. This applies even when no git commit is being created in the current session. Do not commit or push unless the user explicitly asks for it.
