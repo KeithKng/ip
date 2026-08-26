@@ -39,6 +39,24 @@ public class Task {
     }
 
     /**
+     * Returns whether this task has been marked as complete.
+     *
+     * @return {@code true} when complete, otherwise {@code false}
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Returns this task in the persistent storage format.
+     *
+     * @return storage line containing the type marker, status marker, and description
+     */
+    public String toStorageString() {
+        return "T | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
      * Returns the common status and description portion of a task display.
      * Subclasses prepend their task-type marker and append any scheduling details.
      *

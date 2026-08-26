@@ -626,3 +626,63 @@ bye
 ```text
 Bye. Hope to see you again soon!
 ```
+
+## Test case: Save after task-list changes
+
+### Aim
+
+Verify that task-changing commands still return the expected responses while
+triggering the save path for the happy path.
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+mark 1
+```
+
+#### Expected output
+
+```text
+Nice! I've marked this task as done:
+  [T][X] read book
+```
+
+#### Command
+
+```text
+delete 1
+```
+
+#### Expected output
+
+```text
+Noted. I've removed this task:
+  [T][X] read book
+Now you have 0 tasks in the list.
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```

@@ -1,12 +1,18 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A small command-line task list backed by a dynamically sized collection.
  */
 public class Keef {
     private static final String DIVIDER = "____________________________________________________________";
+    private static final Path STORAGE_PATH = Paths.get("data", "keef.txt");
 
    public static void main(String[] args) {
         String banner =
@@ -69,6 +75,7 @@ public class Keef {
         }
         Task task = new Todo(description);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -95,6 +102,7 @@ public class Keef {
         }
         Task task = new Deadline(description, by);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -133,6 +141,7 @@ public class Keef {
         }
         Task task = new Event(description, from, to);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -156,6 +165,7 @@ public class Keef {
         int taskIndex = taskNumber - 1;
         Task task = tasks.get(taskIndex);
         task.markAsDone();
+        saveTasks(tasks);
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + task);
     }
@@ -168,6 +178,7 @@ public class Keef {
         int taskIndex = taskNumber - 1;
         Task task = tasks.get(taskIndex);
         task.markAsNotDone();
+        saveTasks(tasks);
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + task);
     }
@@ -180,10 +191,31 @@ public class Keef {
         int taskNumber = readTaskNumber(command.substring("delete".length()).trim(), tasks.size(), "delete");
         int taskIndex = taskNumber - 1;
         Task removedTask = tasks.remove(taskIndex);
+        saveTasks(tasks);
 
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Saves all tasks to disk in a simple line-based format.
+     */
+    private static void saveTasks(List<Task> tasks) {
+        List<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            lines.add(task.toStorageString());
+        }
+
+        try {
+            Path parentPath = STORAGE_PATH.getParent();
+            if (parentPath != null) {
+                Files.createDirectories(parentPath);
+            }
+            Files.write(STORAGE_PATH, lines, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save tasks to " + STORAGE_PATH, e);
+        }
     }
 
     /**
