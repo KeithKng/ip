@@ -28,7 +28,7 @@ public class Keef {
         System.out.println(DIVIDER);
 
         Scanner input = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
         while (input.hasNextLine()) {
             String command = input.nextLine();
             Command commandType = Command.fromInput(command);
@@ -196,6 +196,72 @@ public class Keef {
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Loads tasks from disk in the simple line-based format used by saveTasks.
+     * Returns an empty list when the storage file does not exist or cannot be
+     * read. Malformed lines are skipped.
+     */
+    private static List<Task> loadTasks() {
+        List<Task> tasks = new ArrayList<>();
+        if (!Files.exists(STORAGE_PATH)) {
+            return tasks;
+        }
+
+        try {
+            List<String> lines = Files.readAllLines(STORAGE_PATH, StandardCharsets.UTF_8);
+            for (String line : lines) {
+                if (line == null || line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split(" \\| ");
+                String type = parts.length > 0 ? parts[0].trim() : "";
+                String status = parts.length > 1 ? parts[1].trim() : "0";
+                try {
+                    switch (type) {
+                        case "T": {
+                            String desc = parts.length > 2 ? parts[2].trim() : "";
+                            Task t = new Todo(desc);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        case "D": {
+                            String desc = parts.length > 2 ? parts[2].trim() : "";
+                            String by = parts.length > 3 ? parts[3].trim() : "";
+                            Task t = new Deadline(desc, by);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        case "E": {
+                            String desc = parts.length > 2 ? parts[2].trim() : "";
+                            String from = parts.length > 3 ? parts[3].trim() : "";
+                            String to = parts.length > 4 ? parts[4].trim() : "";
+                            Task t = new Event(desc, from, to);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        default:
+                            // Unknown task type — skip
+                    }
+                } catch (Exception ex) {
+                    // Skip malformed task lines
+                }
+            }
+        } catch (IOException e) {
+            // If reading fails, return what was parsed (possibly empty)
+        }
+
+        return tasks;
     }
 
     /**
