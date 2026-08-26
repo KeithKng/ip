@@ -15,7 +15,9 @@ bin/
 
 # Temp files
 _temp/
-/data/
+
+# Keep the data directory in the repository but ignore the runtime keef file
+data/keef.txt
 
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
