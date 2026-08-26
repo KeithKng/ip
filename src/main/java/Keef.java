@@ -1,5 +1,9 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -71,7 +75,7 @@ public class Keef {
                 }
                 if (commandType == null) {
                     throw new KeefException("I don't recognise that command.",
-                            "Use todo, deadline, event, list, mark, unmark, delete, or bye.");
+                            "Use todo, deadline, event, list, ondate, mark, unmark, delete, or bye.");
                 }
 
                 switch (commandType) {
@@ -79,6 +83,7 @@ public class Keef {
                 case DEADLINE -> addDeadline(command, tasks);
                 case EVENT -> addEvent(command, tasks);
                 case LIST -> printTasks(tasks);
+                case ONDATE -> printTasksOnDate(command, tasks);
                 case MARK -> markTask(command, tasks);
                 case UNMARK -> unmarkTask(command, tasks);
                 case DELETE -> deleteTask(command, tasks);
@@ -178,6 +183,40 @@ public class Keef {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Prints tasks whose deadlines or events fall on the specified date.
+     */
+    private static void printTasksOnDate(String command, List<Task> tasks) throws KeefException {
+        String dateText = command.substring("ondate".length()).trim();
+        if (dateText.isEmpty()) {
+            throw new KeefException("A date is required.", "Enter: ondate 2019-12-02");
+        }
+
+        LocalDate targetDate = parseDate(dateText);
+        if (targetDate == null) {
+            throw new KeefException("The date must be in yyyy-mm-dd format.", "Enter: ondate 2019-12-02");
+        }
+
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task instanceof Deadline deadline && deadline.getByDate() != null && deadline.getByDate().equals(targetDate)) {
+                matches.add(task);
+            } else if (task instanceof Event event && event.occursOn(targetDate)) {
+                matches.add(task);
+            }
+        }
+
+        if (matches.isEmpty()) {
+            System.out.println("No tasks are scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH)) + ".");
+            return;
+        }
+
+        System.out.println("Here are the tasks on " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH)) + ":");
+        for (int i = 0; i < matches.size(); i++) {
+            System.out.println((i + 1) + "." + matches.get(i));
         }
     }
 
@@ -359,6 +398,40 @@ public class Keef {
                 // best-effort cleanup only
             }
         }
+    }
+
+    /**
+     * Parses a user-entered date string into a {@link LocalDate}.
+     *
+     * @return a parsed date, or {@code null} if the text does not match a supported format
+     */
+    private static LocalDate parseDate(String dateText) {
+        if (dateText == null) {
+            return null;
+        }
+        String trimmed = dateText.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        List<DateTimeFormatter> formatters = List.of(
+                DateTimeFormatter.ISO_LOCAL_DATE,
+                DateTimeFormatter.ofPattern("d/M/yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("MMM d yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+        );
+
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDate.parse(trimmed, formatter);
+            } catch (DateTimeParseException ignored) {
+                // Try the next supported format.
+            }
+        }
+        return null;
     }
 
     /**
