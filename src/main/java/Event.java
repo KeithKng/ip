@@ -27,4 +27,14 @@ public class Event extends Task {
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns this event in the persistent storage format.
+     *
+     * @return storage line containing task type, status, description, start text, and end text
+     */
+    @Override
+    public String toStorageString() {
+        return "E | " + (isDone() ? "1" : "0") + " | " + description + " | " + from + " | " + to;
+    }
 }

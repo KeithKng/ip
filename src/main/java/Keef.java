@@ -1,12 +1,42 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A small command-line task list backed by a dynamically sized collection.
  */
 public class Keef {
     private static final String DIVIDER = "____________________________________________________________";
+    private static final Path STORAGE_PATH = findStoragePath();
+
+    private static Path findStoragePath() {
+        // Prefer locating the repository root from the code source location so the
+        // storage path is stable regardless of the process working directory.
+        try {
+            Path codeLocation = Paths.get(Keef.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath();
+            Path p = codeLocation;
+            if (Files.isRegularFile(p)) {
+                p = p.getParent();
+            }
+            while (p != null) {
+                if (Files.exists(p.resolve(".git"))) {
+                    return p.resolve("data").resolve("keef.txt");
+                }
+                p = p.getParent();
+            }
+        } catch (Exception e) {
+            // fall through to using working directory
+        }
+
+        // Fallback: use the current working directory
+        Path cwd = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
+        return cwd.resolve("data").resolve("keef.txt");
+    }
 
    public static void main(String[] args) {
         String banner =
@@ -22,7 +52,7 @@ public class Keef {
         System.out.println(DIVIDER);
 
         Scanner input = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
         while (input.hasNextLine()) {
             String command = input.nextLine();
             Command commandType = Command.fromInput(command);
@@ -69,6 +99,7 @@ public class Keef {
         }
         Task task = new Todo(description);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -95,6 +126,7 @@ public class Keef {
         }
         Task task = new Deadline(description, by);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -133,6 +165,7 @@ public class Keef {
         }
         Task task = new Event(description, from, to);
         tasks.add(task);
+        saveTasks(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -156,6 +189,7 @@ public class Keef {
         int taskIndex = taskNumber - 1;
         Task task = tasks.get(taskIndex);
         task.markAsDone();
+        saveTasks(tasks);
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + task);
     }
@@ -168,6 +202,7 @@ public class Keef {
         int taskIndex = taskNumber - 1;
         Task task = tasks.get(taskIndex);
         task.markAsNotDone();
+        saveTasks(tasks);
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + task);
     }
@@ -180,10 +215,150 @@ public class Keef {
         int taskNumber = readTaskNumber(command.substring("delete".length()).trim(), tasks.size(), "delete");
         int taskIndex = taskNumber - 1;
         Task removedTask = tasks.remove(taskIndex);
+        saveTasks(tasks);
 
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Loads tasks from disk in the simple line-based format used by saveTasks.
+     * Returns an empty list when the storage file does not exist or cannot be
+     * read. Malformed lines are skipped. If the file appears heavily corrupted
+     * (many malformed lines), the file is moved to a .corrupt.* backup and an
+     * empty list is returned.
+     */
+    private static List<Task> loadTasks() {
+        List<Task> tasks = new ArrayList<>();
+        try {
+            if (!Files.exists(STORAGE_PATH)) {
+                return tasks;
+            }
+
+            List<String> lines = Files.readAllLines(STORAGE_PATH, StandardCharsets.UTF_8);
+            int skipped = 0;
+            for (String line : lines) {
+                if (line == null || line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split("\\s*\\|\\s*");
+                String type = parts.length > 0 ? parts[0].trim() : "";
+                String status = parts.length > 1 ? parts[1].trim() : "0";
+                try {
+                    switch (type) {
+                        case "T": {
+                            if (parts.length < 3) {
+                                throw new IllegalArgumentException("missing description");
+                            }
+                            String desc = parts[2].trim();
+                            Task t = new Todo(desc);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        case "D": {
+                            if (parts.length < 4) {
+                                throw new IllegalArgumentException("missing fields");
+                            }
+                            String desc = parts[2].trim();
+                            String by = parts[3].trim();
+                            Task t = new Deadline(desc, by);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        case "E": {
+                            if (parts.length < 5) {
+                                throw new IllegalArgumentException("missing fields");
+                            }
+                            String desc = parts[2].trim();
+                            String from = parts[3].trim();
+                            String to = parts[4].trim();
+                            Task t = new Event(desc, from, to);
+                            if ("1".equals(status)) {
+                                t.markAsDone();
+                            }
+                            tasks.add(t);
+                            break;
+                        }
+                        default:
+                            System.err.println("Warning: Unknown task type in storage file: " + type);
+                            skipped++;
+                    }
+                } catch (Exception ex) {
+                    skipped++;
+                    System.err.println("Warning: Skipping malformed storage line: \"" + line + "\" (" + ex.getMessage() + ")");
+                }
+            }
+
+            // If a large fraction of lines were malformed, assume the file is corrupted.
+            if (lines.size() > 0 && skipped >= Math.max(1, lines.size() / 2)) {
+                try {
+                    Path backup = STORAGE_PATH.resolveSibling(STORAGE_PATH.getFileName().toString() + ".corrupt." + System.currentTimeMillis());
+                    Files.createDirectories(STORAGE_PATH.getParent());
+                    Files.move(STORAGE_PATH, backup);
+                    System.err.println("Storage file appeared corrupted; moved to " + backup + " and starting with empty task list.");
+                    return new ArrayList<>();
+                } catch (Exception e) {
+                    System.err.println("Warning: Failed to backup corrupted storage file: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Warning: Unable to read storage file " + STORAGE_PATH + ": " + e.getMessage());
+        } catch (SecurityException se) {
+            System.err.println("Warning: No permission to read storage file " + STORAGE_PATH + ": " + se.getMessage());
+        }
+
+        return tasks;
+    }
+
+    /**
+     * Saves all tasks to disk in a simple line-based format.
+     * Uses an atomic write (when available) by writing to a temporary file and
+     * moving it into place. Failures are reported to stderr but do not crash
+     * the application.
+     */
+    private static void saveTasks(List<Task> tasks) {
+        List<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            lines.add(task.toStorageString());
+        }
+
+        Path parentPath = STORAGE_PATH.getParent();
+        try {
+            if (parentPath != null) {
+                Files.createDirectories(parentPath);
+            }
+            // Write to a temp file in the same directory to allow an atomic move.
+            Path tempFile = parentPath != null
+                    ? parentPath.resolve(STORAGE_PATH.getFileName().toString() + ".tmp")
+                    : Paths.get(STORAGE_PATH.toString() + ".tmp");
+            Files.write(tempFile, lines, StandardCharsets.UTF_8);
+            try {
+                Files.move(tempFile, STORAGE_PATH, java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.ATOMIC_MOVE);
+            } catch (java.nio.file.AtomicMoveNotSupportedException amnse) {
+                // Best-effort fallback when atomic move is not supported on this FS.
+                Files.move(tempFile, STORAGE_PATH, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException | SecurityException e) {
+            System.err.println("Error: Failed to save tasks to " + STORAGE_PATH + ": " + e.getMessage());
+            // Try to clean up any temporary file left behind.
+            try {
+                Path tempFile = parentPath != null
+                        ? parentPath.resolve(STORAGE_PATH.getFileName().toString() + ".tmp")
+                        : Paths.get(STORAGE_PATH.toString() + ".tmp");
+                if (Files.exists(tempFile)) {
+                    Files.delete(tempFile);
+                }
+            } catch (Exception ignore) {
+                // best-effort cleanup only
+            }
+        }
     }
 
     /**

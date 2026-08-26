@@ -626,3 +626,110 @@ bye
 ```text
 Bye. Hope to see you again soon!
 ```
+
+## Test case: Save after task-list changes
+
+### Aim
+
+Verify that task-changing commands still return the expected responses while
+triggering the save path for the happy path.
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+mark 1
+```
+
+#### Expected output
+
+```text
+Nice! I've marked this task as done:
+  [T][X] read book
+```
+
+#### Command
+
+```text
+delete 1
+```
+
+#### Expected output
+
+```text
+Noted. I've removed this task:
+  [T][X] read book
+Now you have 0 tasks in the list.
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
+## Manual storage robustness checks
+
+### Aim
+
+Validate the save/load edge cases that are not covered by the default automated
+runner because the runner clears the `data` directory before each case. These
+checks are intended for a local manual run when verifying file persistence.
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+```
+
+#### Manual setup
+
+Create a malformed file at `data/keef.txt` such as:
+
+```text
+T | 1 | read book
+D | maybe | missing by field
+E | 0 | event | 2pm
+```
+
+Then start the chatbot and run:
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+```
+
+The malformed file should be ignored and, if enough lines are unreadable, moved to
+`data/keef.txt.corrupt.<timestamp>` before startup continues with an empty list.
+The default UI runner intentionally removes `data` before each case, so this
+validation is best performed as a separate manual smoke test.

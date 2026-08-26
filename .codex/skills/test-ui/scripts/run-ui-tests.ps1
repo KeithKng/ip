@@ -77,6 +77,9 @@ foreach ($caseMatch in $caseMatches) {
     $startInfo.RedirectStandardError = $true
     $startInfo.CreateNoWindow = $true
 
+    if (Test-Path -LiteralPath 'data') {
+        Remove-Item -LiteralPath 'data' -Recurse -Force
+    }
     $process = [System.Diagnostics.Process]::new()
     $process.StartInfo = $startInfo
     [void]$process.Start()
