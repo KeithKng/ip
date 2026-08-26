@@ -16,8 +16,11 @@ bin/
 # Temp files
 _temp/
 
-# Keep the data directory in the repository but ignore the runtime keef file
+# Keep the data directory in the repository but ignore runtime task data and backups
 data/keef.txt
+data/keef.txt.*
+data/*.corrupt.*
+data/*.tmp
 
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT

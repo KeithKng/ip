@@ -686,3 +686,50 @@ bye
 ```text
 Bye. Hope to see you again soon!
 ```
+
+## Manual storage robustness checks
+
+### Aim
+
+Validate the save/load edge cases that are not covered by the default automated
+runner because the runner clears the `data` directory before each case. These
+checks are intended for a local manual run when verifying file persistence.
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+```
+
+#### Manual setup
+
+Create a malformed file at `data/keef.txt` such as:
+
+```text
+T | 1 | read book
+D | maybe | missing by field
+E | 0 | event | 2pm
+```
+
+Then start the chatbot and run:
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+```
+
+The malformed file should be ignored and, if enough lines are unreadable, moved to
+`data/keef.txt.corrupt.<timestamp>` before startup continues with an empty list.
+The default UI runner intentionally removes `data` before each case, so this
+validation is best performed as a separate manual smoke test.
