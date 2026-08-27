@@ -43,7 +43,7 @@ public final class Parser {
         Command command = Command.fromInput(trimmed);
         if (command == null) {
             throw new KeefException("I don't recognise that command.",
-                    "Use todo, deadline, event, list, ondate, mark, unmark, delete, or bye.");
+                    "Use todo, deadline, event, list, ondate, mark, unmark, delete, find, or bye.");
         }
 
         String keyword = command.getKeyword();
@@ -211,6 +211,20 @@ public final class Parser {
         boolean hasWhitespaceAfter = markerEndIndex == details.length()
                 || Character.isWhitespace(details.charAt(markerEndIndex));
         return hasWhitespaceBefore && hasWhitespaceAfter ? markerIndex : -1;
+    }
+
+    /**
+     * Validates and extracts a find keyword.
+     *
+     * @param arguments text after the find keyword
+     * @return trimmed keyword text
+     * @throws KeefException when the keyword is missing
+     */
+    public static String parseFindKeyword(String arguments) throws KeefException {
+        if (arguments.isEmpty()) {
+            throw new KeefException("A find command needs a keyword.", "Enter: find book");
+        }
+        return arguments.trim();
     }
 
     /**

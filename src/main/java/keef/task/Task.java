@@ -32,6 +32,15 @@ public class Task {
     }
 
     /**
+     * Returns the description of this task.
+     *
+     * @return task description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns the status character used in a task-list display.
      *
      * @return {@code X} when complete, otherwise a space
