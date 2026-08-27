@@ -193,6 +193,13 @@ public final class Parser {
         return taskNumber;
     }
 
+    /**
+     * Finds the index of a whitespace-delimited marker within the given text.
+     *
+     * @param details text to search
+     * @param marker marker token to find, for example {@code "/by"}
+     * @return index of the marker, or {@code -1} when it is absent or not whitespace-delimited
+     */
     private static int findMarker(String details, String marker) {
         int markerIndex = details.indexOf(marker);
         if (markerIndex < 0) {
