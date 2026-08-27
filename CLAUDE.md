@@ -11,5 +11,6 @@ This file records key rules for assistants editing this repository. These are au
 - Use relative, OS-independent file paths (java.nio.file.Path or similar) when adding or modifying code that references the filesystem.
 - Avoid changing unrelated files. Make precise, surgical edits and explain why they are needed.
 - If the user requests automation of commits (e.g., in a CI workflow), request explicit confirmation and document the behavior clearly.
+- All Java code added or modified in this project must follow the checklist in the `seedu-java-coding-standard` skill (`.codex/skills/seedu-java-coding-standard/SKILL.md`).
 
 Following these rules ensures users retain full control over repository state and avoids unexpected or undesired commits.

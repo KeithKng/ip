@@ -67,7 +67,8 @@ public class Storage {
                 }
             } catch (IllegalArgumentException e) {
                 skipped++;
-                System.err.println("Warning: Skipping malformed storage line: \"" + line + "\" (" + e.getMessage() + ")");
+                System.err.println("Warning: Skipping malformed storage line: \"" + line
+                        + "\" (" + e.getMessage() + ")");
             }
         }
 
@@ -139,7 +140,8 @@ public class Storage {
      */
     private static Path findRepositoryRoot() {
         try {
-            Path codeLocation = Paths.get(Keef.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath();
+            Path codeLocation = Paths.get(Keef.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                    .toAbsolutePath();
             Path cursor = Files.isRegularFile(codeLocation) ? codeLocation.getParent() : codeLocation;
             while (cursor != null) {
                 if (Files.exists(cursor.resolve(".git"))) {
@@ -209,7 +211,8 @@ public class Storage {
                 Files.createDirectories(parent);
             }
             Files.move(storagePath, backupPath);
-            System.err.println("Storage file appeared corrupted; moved to " + backupPath + " and starting with empty task list.");
+            System.err.println("Storage file appeared corrupted; moved to " + backupPath
+                    + " and starting with empty task list.");
         } catch (IOException | SecurityException e) {
             System.err.println("Warning: Failed to backup corrupted storage file: " + e.getMessage());
         }

@@ -40,3 +40,8 @@ failure before doing further work.
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## Java coding standard
+
+All Java code added or modified in this project must follow the checklist in the
+`seedu-java-coding-standard` skill (`.codex/skills/seedu-java-coding-standard/SKILL.md`).
