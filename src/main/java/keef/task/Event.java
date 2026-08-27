@@ -76,6 +76,12 @@ public class Event extends Task {
         return "E | " + (isDone() ? "1" : "0") + " | " + description + " | " + from + " | " + to;
     }
 
+    /**
+     * Attempts to parse the given text as a date or date-time in one of the supported formats.
+     *
+     * @param text raw start or end text
+     * @return parsed date-time, or {@code null} when the text does not match any supported format
+     */
     private static LocalDateTime parseDateTime(String text) {
         if (text == null) {
             return null;

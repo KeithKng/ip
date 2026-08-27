@@ -112,6 +112,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Resolves a configured storage path against the repository root, falling back to the working directory.
+     *
+     * @param filePath absolute path or path relative to repository root
+     * @return resolved absolute storage path
+     */
     private static Path resolveStoragePath(String filePath) {
         Path configuredPath = Paths.get(filePath);
         if (configuredPath.isAbsolute()) {
@@ -125,6 +131,12 @@ public class Storage {
         return Paths.get(System.getProperty("user.dir")).toAbsolutePath().resolve(configuredPath);
     }
 
+    /**
+     * Locates the repository root by walking upward from the running code's location, looking for a
+     * {@code .git} directory.
+     *
+     * @return repository root path, or {@code null} when it cannot be determined
+     */
     private static Path findRepositoryRoot() {
         try {
             Path codeLocation = Paths.get(Keef.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath();
@@ -141,6 +153,13 @@ public class Storage {
         return null;
     }
 
+    /**
+     * Parses one storage line into a task.
+     *
+     * @param line raw storage line
+     * @return parsed task, or {@code null} when the task type is unrecognised
+     * @throws IllegalArgumentException when required fields are missing
+     */
     private Task parseStorageLine(String line) {
         String[] parts = line.split("\\s*\\|\\s*");
         String type = parts.length > 0 ? parts[0].trim() : "";
@@ -178,6 +197,9 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Moves the storage file aside as a backup after detecting widespread corruption.
+     */
     private void backupCorruptedStorage() {
         try {
             Path backupPath = storagePath.resolveSibling(
@@ -193,6 +215,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Deletes the temporary save file, ignoring failures since cleanup is best-effort.
+     *
+     * @param tempFile temporary file to delete
+     */
     private void cleanupTempFile(Path tempFile) {
         try {
             if (Files.exists(tempFile)) {

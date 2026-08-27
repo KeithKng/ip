@@ -92,6 +92,12 @@ public class Deadline extends Task {
         return "D | " + (isDone() ? "1" : "0") + " | " + description + " | " + storedValue;
     }
 
+    /**
+     * Attempts to parse the given text as a date or date-time in one of the supported formats.
+     *
+     * @param text raw due-date text
+     * @return parsed deadline, or {@code null} when the text does not match any supported format
+     */
     private static ParsedDeadline parseDeadline(String text) {
         if (text == null) {
             return null;
@@ -123,6 +129,11 @@ public class Deadline extends Task {
         return null;
     }
 
+    /**
+     * Formats the due date or date-time for command-line display.
+     *
+     * @return display text for the due date or date-time
+     */
     private String formatDueText() {
         if (byDateTime == null) {
             return byText;
@@ -133,6 +144,12 @@ public class Deadline extends Task {
         return byDateTime.toLocalDate().format(DISPLAY_DATE_FORMAT);
     }
 
+    /**
+     * Formats a due date or date-time for persistent storage.
+     *
+     * @param dateTime due date-time to format
+     * @return storage text for the due date or date-time
+     */
     private String formatStoredDate(LocalDateTime dateTime) {
         if (hasTime) {
             return dateTime.format(STORAGE_DATE_TIME_FORMAT);

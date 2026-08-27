@@ -61,6 +61,12 @@ public class Keef {
         }
     }
 
+    /**
+     * Dispatches a parsed command to its handler.
+     *
+     * @param parsedCommand command and arguments to execute
+     * @throws KeefException when the command handler reports a user-facing error
+     */
     private void execute(Parser.ParsedCommand parsedCommand) throws KeefException {
         switch (parsedCommand.getCommand()) {
         case TODO -> addTodo(parsedCommand.getArguments());
@@ -75,6 +81,12 @@ public class Keef {
         }
     }
 
+    /**
+     * Creates a to-do task from the given arguments, saves it, and reports it to the user.
+     *
+     * @param arguments text after the todo keyword
+     * @throws KeefException when the description is missing
+     */
     private void addTodo(String arguments) throws KeefException {
         String description = Parser.parseTodoDescription(arguments);
         Task task = new Todo(description);
@@ -83,6 +95,12 @@ public class Keef {
         ui.showTaskAdded(task, tasks.size());
     }
 
+    /**
+     * Creates a deadline task from the given arguments, saves it, and reports it to the user.
+     *
+     * @param arguments text after the deadline keyword
+     * @throws KeefException when the description or /by value is missing
+     */
     private void addDeadline(String arguments) throws KeefException {
         Parser.DeadlineDetails details = Parser.parseDeadlineDetails(arguments);
         Task task = new Deadline(details.getDescription(), details.getBy());
@@ -91,6 +109,12 @@ public class Keef {
         ui.showTaskAdded(task, tasks.size());
     }
 
+    /**
+     * Creates an event task from the given arguments, saves it, and reports it to the user.
+     *
+     * @param arguments text after the event keyword
+     * @throws KeefException when required fields are missing or malformed
+     */
     private void addEvent(String arguments) throws KeefException {
         Parser.EventDetails details = Parser.parseEventDetails(arguments);
         Task task = new Event(details.getDescription(), details.getFrom(), details.getTo());
@@ -99,12 +123,24 @@ public class Keef {
         ui.showTaskAdded(task, tasks.size());
     }
 
+    /**
+     * Shows tasks that occur on the date given in the arguments.
+     *
+     * @param arguments text after the ondate keyword
+     * @throws KeefException when the date is missing or invalid
+     */
     private void showTasksOnDate(String arguments) throws KeefException {
         LocalDate targetDate = Parser.parseOnDate(arguments);
         List<Task> matchingTasks = tasks.findTasksOnDate(targetDate);
         ui.showTasksOnDate(targetDate, matchingTasks);
     }
 
+    /**
+     * Marks the task identified in the arguments as done, saves it, and reports it to the user.
+     *
+     * @param arguments text after the mark keyword
+     * @throws KeefException when the task number is missing, malformed, or out of range
+     */
     private void markTask(String arguments) throws KeefException {
         int taskNumber = Parser.parseTaskNumber(arguments, tasks.size(), "mark");
         Task task = tasks.get(taskNumber - 1);
@@ -113,6 +149,12 @@ public class Keef {
         ui.showTaskMarkedDone(task);
     }
 
+    /**
+     * Marks the task identified in the arguments as not done, saves it, and reports it to the user.
+     *
+     * @param arguments text after the unmark keyword
+     * @throws KeefException when the task number is missing, malformed, or out of range
+     */
     private void unmarkTask(String arguments) throws KeefException {
         int taskNumber = Parser.parseTaskNumber(arguments, tasks.size(), "unmark");
         Task task = tasks.get(taskNumber - 1);
@@ -121,6 +163,12 @@ public class Keef {
         ui.showTaskMarkedNotDone(task);
     }
 
+    /**
+     * Removes the task identified in the arguments, saves the list, and reports it to the user.
+     *
+     * @param arguments text after the delete keyword
+     * @throws KeefException when the task number is missing, malformed, or out of range
+     */
     private void deleteTask(String arguments) throws KeefException {
         int taskNumber = Parser.parseTaskNumber(arguments, tasks.size(), "delete");
         Task removedTask = tasks.remove(taskNumber - 1);
@@ -128,6 +176,11 @@ public class Keef {
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 
+    /**
+     * Launches the Keef application using the default storage file.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         new Keef("data\\keef.txt").run();
     }
