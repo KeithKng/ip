@@ -177,6 +177,12 @@ public class Keef {
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 
+    /**
+     * Finds tasks whose description matches the keyword in the arguments and reports them to the user.
+     *
+     * @param arguments text after the find keyword
+     * @throws KeefException when the keyword is missing
+     */
     private void findTasks(String arguments) throws KeefException {
         String keyword = Parser.parseFindKeyword(arguments);
         List<Task> matchingTasks = tasks.find(keyword);
