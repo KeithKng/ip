@@ -37,7 +37,7 @@ blah
 
 ```text
 Error: I don't recognise that command.
-Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, or bye.
+Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, find, or bye.
 ```
 
 #### Manual command
@@ -761,6 +761,106 @@ delete 1
 Noted. I've removed this task:
   [T][X] read book
 Now you have 0 tasks in the list.
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
+## Test case: Find tasks by keyword
+
+### Aim
+
+Verify that the `find` command lists tasks whose description contains the given
+keyword, ignoring case, that it reports an empty result when nothing matches, and
+that it reports an error when no keyword is given.
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+deadline return book /by 2026-06-06
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [D][ ] return book (by: Jun 06 2026)
+Now you have 2 tasks in the list.
+```
+
+#### Command
+
+```text
+mark 1
+```
+
+#### Expected output
+
+```text
+Nice! I've marked this task as done:
+  [T][X] read book
+```
+
+#### Command
+
+```text
+find book
+```
+
+#### Expected output
+
+```text
+Here are the matching tasks in your list:
+1.[T][X] read book
+2.[D][ ] return book (by: Jun 06 2026)
+```
+
+#### Command
+
+```text
+find laptop
+```
+
+#### Expected output
+
+```text
+Here are the matching tasks in your list:
+```
+
+#### Command
+
+```text
+find
+```
+
+#### Expected output
+
+```text
+Error: A find command needs a keyword.
+Try: Enter: find book
 ```
 
 #### Command

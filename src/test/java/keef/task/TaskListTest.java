@@ -67,4 +67,21 @@ class TaskListTest {
 
         assertEquals(List.of(), taskList.findTasksOnDate(LocalDate.of(2026, 9, 1)));
     }
+
+    @Test
+    void find_caseInsensitiveMatch_returnedInListOrder() {
+        Task first = new Todo("read book");
+        Task second = new Todo("buy bread");
+        Task third = new Deadline("return book", "2026-06-06");
+        TaskList taskList = new TaskList(List.of(first, second, third));
+
+        assertEquals(List.of(first, third), taskList.find("BOOK"));
+    }
+
+    @Test
+    void find_noMatch_emptyListReturned() {
+        TaskList taskList = new TaskList(List.of(new Todo("read book")));
+
+        assertEquals(List.of(), taskList.find("laptop"));
+    }
 }

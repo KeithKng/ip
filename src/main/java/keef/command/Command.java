@@ -12,6 +12,7 @@ public enum Command {
     MARK("mark", true),
     UNMARK("unmark", true),
     DELETE("delete", true),
+    FIND("find", true),
     BYE("bye", false);
 
     private final String keyword;

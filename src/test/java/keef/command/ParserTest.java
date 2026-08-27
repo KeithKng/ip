@@ -100,6 +100,16 @@ class ParserTest {
     }
 
     @Test
+    void parseFindKeyword_presentKeyword_trimmedKeywordReturned() throws KeefException {
+        assertEquals("book", Parser.parseFindKeyword("  book  "));
+    }
+
+    @Test
+    void parseFindKeyword_emptyKeyword_exceptionThrown() {
+        assertThrows(KeefException.class, () -> Parser.parseFindKeyword(""));
+    }
+
+    @Test
     void parseTaskNumber_validBoundaryNumbers_numbersReturned() throws KeefException {
         assertEquals(1, Parser.parseTaskNumber("1", 3, "mark"));
         assertEquals(3, Parser.parseTaskNumber("3", 3, "mark"));

@@ -71,6 +71,7 @@ public class Keef {
         case MARK -> markTask(parsedCommand.getArguments());
         case UNMARK -> unmarkTask(parsedCommand.getArguments());
         case DELETE -> deleteTask(parsedCommand.getArguments());
+        case FIND -> findTasks(parsedCommand.getArguments());
         case BYE -> throw new IllegalStateException("The bye command is handled before dispatch.");
         }
     }
@@ -126,6 +127,12 @@ public class Keef {
         Task removedTask = tasks.remove(taskNumber - 1);
         storage.save(tasks);
         ui.showTaskDeleted(removedTask, tasks.size());
+    }
+
+    private void findTasks(String arguments) throws KeefException {
+        String keyword = Parser.parseFindKeyword(arguments);
+        List<Task> matchingTasks = tasks.find(keyword);
+        ui.showMatchingTasks(matchingTasks);
     }
 
     public static void main(String[] args) {

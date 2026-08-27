@@ -139,6 +139,18 @@ public class Ui {
     }
 
     /**
+     * Shows tasks whose description matches a find keyword.
+     *
+     * @param matchingTasks tasks matching the keyword
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println((i + 1) + "." + matchingTasks.get(i));
+        }
+    }
+
+    /**
      * Shows that a task was marked complete.
      *
      * @param task marked task
