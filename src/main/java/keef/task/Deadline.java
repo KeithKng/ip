@@ -93,6 +93,16 @@ public class Deadline extends Task {
     }
 
     /**
+     * Checks whether the given text matches one of the supported date or date-time formats.
+     *
+     * @param text raw due-date text
+     * @return {@code true} when the text is parseable as a date or date-time
+     */
+    public static boolean isParseable(String text) {
+        return parseDeadline(text) != null;
+    }
+
+    /**
      * Attempts to parse the given text as a date or date-time in one of the supported formats.
      *
      * @param text raw due-date text

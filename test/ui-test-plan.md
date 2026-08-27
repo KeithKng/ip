@@ -63,20 +63,20 @@ deadline
 
 ```text
 Error: A deadline needs a /by date or time.
-Try: Enter: deadline return book /by Sunday
+Try: Enter: deadline return book /by 2019-12-02
 ```
 
 #### Command
 
 ```text
-deadline /by Sunday
+deadline /by 2019-12-02
 ```
 
 #### Expected output
 
 ```text
 Error: The deadline description is missing.
-Try: Enter: deadline return book /by Sunday
+Try: Enter: deadline return book /by 2019-12-02
 ```
 
 #### Command
@@ -89,7 +89,20 @@ deadline return book /by
 
 ```text
 Error: The deadline date or time is missing.
-Try: Add a value after /by, for example: deadline return book /by Sunday
+Try: Add a value after /by, for example: deadline return book /by 2019-12-02
+```
+
+#### Command
+
+```text
+deadline return book /by Sunday
+```
+
+#### Expected output
+
+```text
+Error: The deadline date or time is not recognised.
+Try: Enter a date such as: deadline return book /by 2019-12-02
 ```
 
 #### Command
@@ -352,14 +365,14 @@ Now you have 1 tasks in the list.
 #### Command
 
 ```text
-deadline return book /by Sunday
+deadline return book /by 2019-12-02
 ```
 
 #### Expected output
 
 ```text
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019)
 Now you have 2 tasks in the list.
 ```
 
@@ -387,7 +400,7 @@ delete 2
 
 ```text
 Noted. I've removed this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019)
 Now you have 2 tasks in the list.
 ```
 
@@ -598,34 +611,34 @@ Bye. Hope to see you again soon!
 
 ### Aim
 
-Verify that the `deadline` command stores its description and `/by` text without
-interpreting the date or time.
+Verify that the `deadline` command accepts a recognised date or date-time for
+`/by` and rejects free-form text that cannot be parsed as one.
 
 #### Command
 
 ```text
-deadline return book /by Sunday
+deadline return book /by 2019-10-15
 ```
 
 #### Expected output
 
 ```text
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Oct 15 2019)
 Now you have 1 tasks in the list.
 ```
 
 #### Command
 
 ```text
-deadline do homework /by no idea :-p
+deadline do homework /by 2019-10-20 1800
 ```
 
 #### Expected output
 
 ```text
 Got it. I've added this task:
-  [D][ ] do homework (by: no idea :-p)
+  [D][ ] do homework (by: Oct 20 2019, 6:00 PM)
 Now you have 2 tasks in the list.
 ```
 
@@ -639,8 +652,21 @@ list
 
 ```text
 Here are the tasks in your list:
-1.[D][ ] return book (by: Sunday)
-2.[D][ ] do homework (by: no idea :-p)
+1.[D][ ] return book (by: Oct 15 2019)
+2.[D][ ] do homework (by: Oct 20 2019, 6:00 PM)
+```
+
+#### Command
+
+```text
+deadline finish essay /by no idea :-p
+```
+
+#### Expected output
+
+```text
+Error: The deadline date or time is not recognised.
+Try: Enter a date such as: deadline return book /by 2019-12-02
 ```
 
 #### Command

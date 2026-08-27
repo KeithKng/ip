@@ -64,6 +64,12 @@ class ParserTest {
     }
 
     @Test
+    void parseDeadlineDetails_unparseableByValue_exceptionThrown() {
+        assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("submit report /by Sunday"));
+        assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("submit report /by no idea"));
+    }
+
+    @Test
     void parseEventDetails_validDetails_trimmedFieldsReturned() throws KeefException {
         Parser.EventDetails details = Parser.parseEventDetails(
                 "  project meeting  /from  2026-09-01 09:00  /to  2026-09-01 10:00 ");

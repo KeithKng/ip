@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import keef.exception.KeefException;
+import keef.task.Deadline;
 
 /**
  * Parses user-entered command text into structured command data.
@@ -76,18 +77,22 @@ public final class Parser {
         int byMarkerIndex = findMarker(arguments, "/by");
         if (byMarkerIndex < 0) {
             throw new KeefException("A deadline needs a /by date or time.",
-                    "Enter: deadline return book /by Sunday");
+                    "Enter: deadline return book /by 2019-12-02");
         }
 
         String description = arguments.substring(0, byMarkerIndex).trim();
         String by = arguments.substring(byMarkerIndex + "/by".length()).trim();
         if (description.isEmpty()) {
             throw new KeefException("The deadline description is missing.",
-                    "Enter: deadline return book /by Sunday");
+                    "Enter: deadline return book /by 2019-12-02");
         }
         if (by.isEmpty()) {
             throw new KeefException("The deadline date or time is missing.",
-                    "Add a value after /by, for example: deadline return book /by Sunday");
+                    "Add a value after /by, for example: deadline return book /by 2019-12-02");
+        }
+        if (!Deadline.isParseable(by)) {
+            throw new KeefException("The deadline date or time is not recognised.",
+                    "Enter a date such as: deadline return book /by 2019-12-02");
         }
         return new DeadlineDetails(description, by);
     }
