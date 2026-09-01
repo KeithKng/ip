@@ -1,90 +1,77 @@
 ---
 name: submit-increment
-description: Safely submit a branch-based assignment increment with explicit approval before every git step, including branch creation, commit, merge, tagging, and push.
+description: Implement one or more assignment increments on branch-X, add and run feature tests, and prepare (but do not perform) the Git submission commands.
 ---
 
-# Submit increment
+# Prepare assignment increment
 
-Use this skill when the user wants to submit the next assignment increment in a Git workflow.
+Use this skill when the user provides an assignment task or one or more tasks and wants the
+implementation prepared for later submission.
 
-Follow these rules exactly:
+The task's tag is the value `X` in `branch-X` and `Level-X`. For example, a task named `Level-7`
+uses `branch-Level-7` and the tag `Level-7`. Preserve the exact capitalization supplied by the
+user. If the task does not provide a usable tag, ask the user for it before creating a branch.
 
-- Always ask for explicit permission before running any repository-changing command.
-- Before each command, show the exact command(s) you want to run and briefly explain what they do.
-- Wait for the user to approve before executing any command.
-- If the tag name is not clearly specified, ask before creating or using a tag.
-- For this assignment, the usual tag is `Level-7` unless the user specifies a different tag name.
-- Only do a merge commit with `--no-ff`.
-- Do not delete the merged feature branch after merging.
-- Push both the merged feature branch and the updated `master` branch to the fork.
+## Required workflow
 
-## Recommended workflow
-
-1. Check the repository state and current branch:
+1. Inspect the repository state and current branch:
 
    ```powershell
    git status --short --branch
+   git branch --list
    ```
 
-   Ask before running it.
+   Do not discard, reset, stash, or overwrite existing user changes. If uncommitted changes are
+   present and their ownership or intended branch is unclear, stop and ask the user.
 
-2. Create or switch to the feature branch, if needed:
+2. Create or switch to the feature branch named `branch-X`:
 
    ```powershell
-   git switch -c branch-Level-7
+   git switch -c branch-X
    ```
 
    If the branch already exists, use:
 
    ```powershell
-   git switch branch-Level-7
+   git switch branch-X
    ```
 
-   Ask before running either command.
+   Do not delete the branch. Do not create a commit.
 
-3. Review the work and create a commit only after approval:
+3. Implement every requested task on `branch-X`. Add or update automated tests for each feature,
+   including relevant edge cases. For Java changes, use the `seedu-java-coding-standard` skill.
 
-   ```powershell
-   git add .
-   git commit -m "<clear commit message>"
-   ```
+   Run the feature tests and directly relevant broader tests. Use Java 25. If the CLI changes,
+   update `test/ui-test-plan.md` and run the project-local `test-ui` skill; stop at its first
+   failure. Report every test command and result.
 
-4. Return to `master` and merge with a merge commit:
-
-   ```powershell
-   git switch master
-   git merge --no-ff branch-Level-7 -m "Merge branch-Level-7 into master"
-   ```
-
-5. Add the tag only after the user confirms the tag name. If no tag is specified, ask whether to use `Level-7`:
-
-   ```powershell
-   git tag Level-7
-   ```
-
-   If the user gives a different tag name, replace it as requested.
-
-6. Push the branch, the updated `master` branch, and the tag to the fork:
-
-   ```powershell
-   git push origin master
-   git push origin branch-Level-7
-   git push origin Level-7
-   ```
-
-   Ask before running this step.
-
-7. Confirm the final state:
+4. Confirm the final state:
 
    ```powershell
    git status --short --branch
-   git tag --list
+   git diff --stat
+   git diff --check
    ```
 
-## Default decision for tag naming
+## Submission commands to output, but never run
 
-If the user is unsure which tag name to use, ask a clarifying question instead of guessing. For this Level 7 task, the default tag name is `Level-7` only after the user confirms it.
+After implementation and verification, output:
 
-## Important note
+```powershell
+git switch master
+git merge --no-ff branch-X -m "Merge branch-X into master"
+git tag X
+git push origin master
+git push origin branch-X
+git push origin X
+```
 
-This workflow is intentionally conservative: do not run any Git step until the user explicitly approves the exact command and the command's purpose is clear.
+Explain that these create the no-fast-forward merge commit, tag it, and push `master`, the still-
+existing feature branch, and the tag. Adapt the remote/base branch if inspection shows they differ.
+
+## Hard constraints
+
+- Never run `git commit`, `git merge`, `git tag`, or `git push` with this skill.
+- Never delete `branch-X` or hide pre-existing changes.
+- Never claim tests passed without running them.
+- If blocked, clearly mark the submission commands as pending.

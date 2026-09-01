@@ -33,9 +33,9 @@ class TaskListTest {
     @Test
     void constructorAndGetAll_inputCopiedAndReturnedListIsUnmodifiable() {
         Task first = new Todo("first");
-        List<Task> initialTasks = new java.util.ArrayList<>(List.of(first));
+        Task[] initialTasks = {first};
         TaskList taskList = new TaskList(initialTasks);
-        initialTasks.clear();
+        initialTasks[0] = new Todo("changed");
 
         assertEquals(List.of(first), taskList.getAll());
         assertThrows(UnsupportedOperationException.class, () -> taskList.getAll().add(new Todo("second")));
@@ -45,7 +45,7 @@ class TaskListTest {
     void findTasksOnDate_matchingDeadlineAndEvent_returnedInListOrder() {
         Deadline deadline = new Deadline("submit report", "2026-09-01 17:00");
         Event event = new Event("conference", "2026-08-31", "2026-09-02");
-        TaskList taskList = new TaskList(List.of(new Todo("unrelated"), deadline, event));
+        TaskList taskList = new TaskList(new Todo("unrelated"), deadline, event);
 
         assertEquals(List.of(deadline, event), taskList.findTasksOnDate(LocalDate.of(2026, 9, 1)));
     }
@@ -53,7 +53,7 @@ class TaskListTest {
     @Test
     void findTasksOnDate_eventBoundaryDates_eventReturned() {
         Event event = new Event("conference", "2026-09-01", "2026-09-03");
-        TaskList taskList = new TaskList(List.of(event));
+        TaskList taskList = new TaskList(event);
 
         assertEquals(List.of(event), taskList.findTasksOnDate(LocalDate.of(2026, 9, 1)));
         assertEquals(List.of(event), taskList.findTasksOnDate(LocalDate.of(2026, 9, 3)));
@@ -61,9 +61,9 @@ class TaskListTest {
 
     @Test
     void findTasksOnDate_unparseableDatesOrNoMatches_emptyListReturned() {
-        TaskList taskList = new TaskList(List.of(
+        TaskList taskList = new TaskList(
                 new Deadline("freeform deadline", "next Tuesday"),
-                new Event("freeform event", "morning", "afternoon")));
+                new Event("freeform event", "morning", "afternoon"));
 
         assertEquals(List.of(), taskList.findTasksOnDate(LocalDate.of(2026, 9, 1)));
     }
@@ -73,14 +73,14 @@ class TaskListTest {
         Task first = new Todo("read book");
         Task second = new Todo("buy bread");
         Task third = new Deadline("return book", "2026-06-06");
-        TaskList taskList = new TaskList(List.of(first, second, third));
+        TaskList taskList = new TaskList(first, second, third);
 
         assertEquals(List.of(first, third), taskList.find("BOOK"));
     }
 
     @Test
     void find_noMatch_emptyListReturned() {
-        TaskList taskList = new TaskList(List.of(new Todo("read book")));
+        TaskList taskList = new TaskList(new Todo("read book"));
 
         assertEquals(List.of(), taskList.find("laptop"));
     }
