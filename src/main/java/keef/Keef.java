@@ -31,7 +31,7 @@ public class Keef {
         ui = new Ui();
         storage = new Storage(filePath);
         try {
-            tasks = new TaskList(storage.load());
+            tasks = new TaskList(storage.load().toArray(Task[]::new));
         } catch (KeefException e) {
             ui.showLoadingError(e.getMessage());
             tasks = new TaskList();

@@ -2,6 +2,7 @@ package keef.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,12 +20,12 @@ public class TaskList {
     }
 
     /**
-     * Creates a task list from existing tasks.
+     * Creates a task list from the supplied tasks.
      *
-     * @param tasks existing tasks to copy into this list
+     * @param tasks tasks to copy into this list
      */
-    public TaskList(List<Task> tasks) {
-        this.tasks = new ArrayList<>(tasks);
+    public TaskList(Task... tasks) {
+        this.tasks = new ArrayList<>(Arrays.asList(tasks));
     }
 
     /**

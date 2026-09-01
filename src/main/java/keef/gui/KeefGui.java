@@ -56,7 +56,7 @@ public class KeefGui extends Application {
 
     private TaskList loadTasks() {
         try {
-            return new TaskList(storage.load());
+            return new TaskList(storage.load().toArray(Task[]::new));
         } catch (KeefException exception) {
             return new TaskList();
         }
