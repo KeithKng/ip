@@ -2,7 +2,7 @@
 
 ## Program
 
-- Compile with Java 25: `javac -d out (Get-ChildItem -Path src/main/java -Filter *.java -Recurse | ForEach-Object FullName)`
+- Compile with Java 25: `./gradlew classes`
 - Run command: `java -cp out keef.Keef`
 - The expected-output blocks below contain a command's response body. The runner
   also records the surrounding divider lines in its console transcript.
