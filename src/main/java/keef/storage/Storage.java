@@ -170,27 +170,28 @@ public class Storage {
 
         Task task;
         switch (type) {
-        case "T":
-            if (parts.length < 3) {
-                throw new IllegalArgumentException("missing description");
+            case "T" -> {
+                if (parts.length < 3) {
+                    throw new IllegalArgumentException("missing description");
+                }
+                task = new Todo(parts[2].trim());
             }
-            task = new Todo(parts[2].trim());
-            break;
-        case "D":
-            if (parts.length < 4) {
-                throw new IllegalArgumentException("missing fields");
+            case "D" -> {
+                if (parts.length < 4) {
+                    throw new IllegalArgumentException("missing fields");
+                }
+                task = new Deadline(parts[2].trim(), parts[3].trim());
             }
-            task = new Deadline(parts[2].trim(), parts[3].trim());
-            break;
-        case "E":
-            if (parts.length < 5) {
-                throw new IllegalArgumentException("missing fields");
+            case "E" -> {
+                if (parts.length < 5) {
+                    throw new IllegalArgumentException("missing fields");
+                }
+                task = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
             }
-            task = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
-            break;
-        default:
-            System.err.println("Warning: Unknown task type in storage file: " + type);
-            return null;
+            default -> {
+                System.err.println("Warning: Unknown task type in storage file: " + type);
+                return null;
+            }
         }
 
         if (isDone) {

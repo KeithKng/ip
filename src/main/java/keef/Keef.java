@@ -69,16 +69,17 @@ public class Keef {
      */
     private void execute(Parser.ParsedCommand parsedCommand) throws KeefException {
         switch (parsedCommand.getCommand()) {
-        case TODO -> addTodo(parsedCommand.getArguments());
-        case DEADLINE -> addDeadline(parsedCommand.getArguments());
-        case EVENT -> addEvent(parsedCommand.getArguments());
-        case LIST -> ui.showTasks(tasks);
-        case ONDATE -> showTasksOnDate(parsedCommand.getArguments());
-        case MARK -> markTask(parsedCommand.getArguments());
-        case UNMARK -> unmarkTask(parsedCommand.getArguments());
-        case DELETE -> deleteTask(parsedCommand.getArguments());
-        case FIND -> findTasks(parsedCommand.getArguments());
-        case BYE -> throw new IllegalStateException("The bye command is handled before dispatch.");
+            case TODO -> addTodo(parsedCommand.getArguments());
+            case DEADLINE -> addDeadline(parsedCommand.getArguments());
+            case EVENT -> addEvent(parsedCommand.getArguments());
+            case LIST -> ui.showTasks(tasks);
+            case ONDATE -> showTasksOnDate(parsedCommand.getArguments());
+            case MARK -> markTask(parsedCommand.getArguments());
+            case UNMARK -> unmarkTask(parsedCommand.getArguments());
+            case DELETE -> deleteTask(parsedCommand.getArguments());
+            case FIND -> findTasks(parsedCommand.getArguments());
+            case BYE -> throw new IllegalStateException("The bye command is handled before dispatch.");
+            default -> throw new IllegalStateException("Unknown command.");
         }
     }
 
