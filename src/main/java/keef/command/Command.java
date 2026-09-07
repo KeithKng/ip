@@ -39,6 +39,7 @@ public enum Command {
      * @return the matching command, or {@code null} if the input is not a valid command form
      */
     public static Command fromInput(String input) {
+        assert input != null : "Parser should reject null input before command lookup.";
         for (Command command : values()) {
             if (input.equals(command.keyword)
                     || command.acceptsArguments && input.startsWith(command.keyword + " ")) {

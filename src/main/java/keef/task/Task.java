@@ -13,6 +13,7 @@ public class Task {
      * @param description text describing the task
      */
     public Task(String description) {
+        assert description != null : "Task descriptions should be provided by the caller.";
         this.description = description;
         this.isDone = false;
     }

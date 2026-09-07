@@ -86,8 +86,10 @@ public class Storage {
      * @throws KeefException when saving fails
      */
     public void save(TaskList taskList) throws KeefException {
+        assert taskList != null : "Storage save should always receive a task list.";
         List<String> lines = new ArrayList<>();
         for (Task task : taskList.getAll()) {
+            assert task != null : "Task lists should not contain null entries.";
             lines.add(task.toStorageString());
         }
 
