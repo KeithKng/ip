@@ -1,6 +1,8 @@
 package keef.gui;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -88,10 +90,8 @@ public class KeefGui extends Application {
         if (taskList.isEmpty()) {
             return "Your task list is empty.";
         }
-        StringBuilder response = new StringBuilder("Here are the tasks in your list:\n");
-        for (int index = 0; index < taskList.size(); index++) {
-            response.append(index + 1).append('.').append(taskList.get(index)).append('\n');
-        }
-        return response.toString().trim();
+        return IntStream.range(0, taskList.size())
+                .mapToObj(index -> (index + 1) + "." + taskList.get(index))
+                .collect(Collectors.joining("\n", "Here are the tasks in your list:\n", ""));
     }
 }

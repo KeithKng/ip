@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
@@ -156,11 +158,9 @@ public class MainWindow extends AnchorPane {
         if (taskList.isEmpty()) {
             return emptyMessage;
         }
-        StringBuilder response = new StringBuilder(heading).append('\n');
-        for (int index = 0; index < taskList.size(); index++) {
-            response.append(index + 1).append('.').append(taskList.get(index)).append('\n');
-        }
-        return response.toString().trim();
+        return IntStream.range(0, taskList.size())
+                .mapToObj(index -> (index + 1) + "." + taskList.get(index))
+                .collect(Collectors.joining("\n", heading + "\n", ""));
     }
 
     private String closeWindow() {

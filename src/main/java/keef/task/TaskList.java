@@ -89,18 +89,9 @@ public class TaskList {
      */
     public List<Task> findTasksOnDate(LocalDate targetDate) {
         assert targetDate != null : "Date filtering requires a target date.";
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof Deadline deadline) {
-                LocalDate deadlineDate = deadline.getByDate();
-                if (deadlineDate != null && deadlineDate.equals(targetDate)) {
-                    matches.add(task);
-                }
-            } else if (task instanceof Event event && event.occursOn(targetDate)) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        return tasks.stream()
+                .filter(task -> matchesDate(task, targetDate))
+                .toList();
     }
 
     /**
@@ -111,13 +102,18 @@ public class TaskList {
      */
     public List<Task> find(String keyword) {
         assert keyword != null : "Keyword search requires a keyword.";
-        List<Task> matches = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase(Locale.ROOT);
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase(Locale.ROOT).contains(lowerKeyword)) {
-                matches.add(task);
-            }
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(lowerKeyword))
+                .toList();
+    }
+
+    private static boolean matchesDate(Task task, LocalDate targetDate) {
+        assert targetDate != null : "Date filtering requires a target date.";
+        if (task instanceof Deadline deadline) {
+            LocalDate dueDate = deadline.getByDate();
+            return dueDate != null && dueDate.equals(targetDate);
         }
-        return matches;
+        return task instanceof Event event && event.occursOn(targetDate);
     }
 }

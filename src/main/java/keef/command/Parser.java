@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import keef.exception.KeefException;
 import keef.task.Deadline;
@@ -148,14 +149,12 @@ public final class Parser {
             throw new KeefException("A date is required.", "Enter: ondate 2019-12-02");
         }
 
-        for (DateTimeFormatter formatter : ONDATE_FORMATTERS) {
-            try {
-                return LocalDate.parse(arguments, formatter);
-            } catch (DateTimeParseException ignored) {
-                // Try the next supported format.
-            }
-        }
-        throw new KeefException("The date must be in yyyy-mm-dd format.", "Enter: ondate 2019-12-02");
+        return ONDATE_FORMATTERS.stream()
+                .map(formatter -> tryParseOnDate(arguments, formatter))
+                .flatMap(Optional::stream)
+                .findFirst()
+                .orElseThrow(() -> new KeefException("The date must be in yyyy-mm-dd format.",
+                        "Enter: ondate 2019-12-02"));
     }
 
     /**
@@ -216,6 +215,21 @@ public final class Parser {
         boolean hasWhitespaceAfter = markerEndIndex == details.length()
                 || Character.isWhitespace(details.charAt(markerEndIndex));
         return hasWhitespaceBefore && hasWhitespaceAfter ? markerIndex : -1;
+    }
+
+    /**
+     * Tries to parse an ondate value with a single formatter.
+     *
+     * @param arguments text to parse
+     * @param formatter formatter to try
+     * @return parsed date when the formatter matches, otherwise {@link Optional#empty()}
+     */
+    private static Optional<LocalDate> tryParseOnDate(String arguments, DateTimeFormatter formatter) {
+        try {
+            return Optional.of(LocalDate.parse(arguments, formatter));
+        } catch (DateTimeParseException ignored) {
+            return Optional.empty();
+        }
     }
 
     /**
