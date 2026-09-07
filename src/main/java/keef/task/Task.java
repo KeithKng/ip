@@ -4,7 +4,7 @@ package keef.task;
  * Represents the information shared by every task type.
  */
 public class Task {
-    protected final String description;
+    private final String description;
     private boolean isDone;
 
     /**
@@ -13,6 +13,7 @@ public class Task {
      * @param description text describing the task
      */
     public Task(String description) {
+        assert description != null : "Task descriptions should be provided by the caller.";
         this.description = description;
         this.isDone = false;
     }
@@ -64,7 +65,7 @@ public class Task {
      * @return storage line containing the type marker, status marker, and description
      */
     public String toStorageString() {
-        return "T | " + (isDone ? "1" : "0") + " | " + description;
+        return "T | " + (isDone ? "1" : "0") + " | " + getDescription();
     }
 
     /**
@@ -75,6 +76,6 @@ public class Task {
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getStatusIcon() + "] " + getDescription();
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Wraps the mutable list of tasks and exposes task-list operations.
@@ -25,7 +26,9 @@ public class TaskList {
      * @param tasks tasks to copy into this list
      */
     public TaskList(Task... tasks) {
+        assert tasks != null : "TaskList should always be built from a task array.";
         this.tasks = new ArrayList<>(Arrays.asList(tasks));
+        assert !this.tasks.contains(null) : "TaskList must not contain null tasks.";
     }
 
     /**
@@ -34,6 +37,7 @@ public class TaskList {
      * @param task task to add
      */
     public void add(Task task) {
+        assert task != null : "TaskList only stores real tasks.";
         tasks.add(task);
     }
 
@@ -44,6 +48,7 @@ public class TaskList {
      * @return removed task
      */
     public Task remove(int index) {
+        assert index >= 0 && index < tasks.size() : "Task removal index should already be validated.";
         return tasks.remove(index);
     }
 
@@ -54,6 +59,7 @@ public class TaskList {
      * @return task at index
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Task lookup index should already be validated.";
         return tasks.get(index);
     }
 
@@ -82,6 +88,7 @@ public class TaskList {
      * @return matching tasks in current list order
      */
     public List<Task> findTasksOnDate(LocalDate targetDate) {
+        assert targetDate != null : "Date filtering requires a target date.";
         return tasks.stream()
                 .filter(task -> matchesDate(task, targetDate))
                 .toList();
@@ -94,13 +101,15 @@ public class TaskList {
      * @return matching tasks in current list order
      */
     public List<Task> find(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        assert keyword != null : "Keyword search requires a keyword.";
+        String lowerKeyword = keyword.toLowerCase(Locale.ROOT);
         return tasks.stream()
-                .filter(task -> task.getDescription().toLowerCase().contains(lowerKeyword))
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(lowerKeyword))
                 .toList();
     }
 
     private static boolean matchesDate(Task task, LocalDate targetDate) {
+        assert targetDate != null : "Date filtering requires a target date.";
         if (task instanceof Deadline deadline) {
             LocalDate dueDate = deadline.getByDate();
             return dueDate != null && dueDate.equals(targetDate);
