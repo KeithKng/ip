@@ -86,10 +86,9 @@ public class Storage {
      * @throws KeefException when saving fails
      */
     public void save(TaskList taskList) throws KeefException {
-        List<String> lines = new ArrayList<>();
-        for (Task task : taskList.getAll()) {
-            lines.add(task.toStorageString());
-        }
+        List<String> lines = taskList.getAll().stream()
+                .map(Task::toStorageString)
+                .toList();
 
         Path parentPath = storagePath.getParent();
         Path tempFile = parentPath != null

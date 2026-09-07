@@ -1,5 +1,7 @@
 package keef.command;
 
+import java.util.Arrays;
+
 /**
  * The commands the Keef task-list application understands.
  */
@@ -39,12 +41,10 @@ public enum Command {
      * @return the matching command, or {@code null} if the input is not a valid command form
      */
     public static Command fromInput(String input) {
-        for (Command command : values()) {
-            if (input.equals(command.keyword)
-                    || command.acceptsArguments && input.startsWith(command.keyword + " ")) {
-                return command;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(command -> input.equals(command.keyword)
+                        || command.acceptsArguments && input.startsWith(command.keyword + " "))
+                .findFirst()
+                .orElse(null);
     }
 }

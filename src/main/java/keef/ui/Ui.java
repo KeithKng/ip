@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import keef.task.Task;
 import keef.task.TaskList;
@@ -114,9 +115,9 @@ public class Ui {
     public void showTasks(TaskList taskList) {
         System.out.println("Here are the tasks in your list:");
         List<Task> tasks = taskList.getAll();
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
-        }
+        IntStream.range(0, tasks.size())
+                .mapToObj(index -> (index + 1) + "." + tasks.get(index))
+                .forEach(System.out::println);
     }
 
     /**
@@ -133,9 +134,9 @@ public class Ui {
         }
 
         System.out.println("Here are the tasks on " + formattedDate + ":");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println((i + 1) + "." + matchingTasks.get(i));
-        }
+        IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> (index + 1) + "." + matchingTasks.get(index))
+                .forEach(System.out::println);
     }
 
     /**
@@ -145,9 +146,9 @@ public class Ui {
      */
     public void showMatchingTasks(List<Task> matchingTasks) {
         System.out.println("Here are the matching tasks in your list:");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println((i + 1) + "." + matchingTasks.get(i));
-        }
+        IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> (index + 1) + "." + matchingTasks.get(index))
+                .forEach(System.out::println);
     }
 
     /**
