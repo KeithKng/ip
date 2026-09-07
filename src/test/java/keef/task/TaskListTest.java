@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +77,20 @@ class TaskListTest {
         TaskList taskList = new TaskList(first, second, third);
 
         assertEquals(List.of(first, third), taskList.find("BOOK"));
+    }
+
+    @Test
+    void find_defaultLocaleDoesNotAffectMatching() {
+        Locale originalLocale = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("tr"));
+        try {
+            Task task = new Todo("INDIGO");
+            TaskList taskList = new TaskList(task);
+
+            assertEquals(List.of(task), taskList.find("indigo"));
+        } finally {
+            Locale.setDefault(originalLocale);
+        }
     }
 
     @Test
