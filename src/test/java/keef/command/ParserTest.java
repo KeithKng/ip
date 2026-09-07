@@ -31,6 +31,14 @@ class ParserTest {
     }
 
     @Test
+    void parse_tagCommand_commandAndArgumentsReturned() throws KeefException {
+        Parser.ParsedCommand parsed = Parser.parse("tag 2 #fun");
+
+        assertEquals(Command.TAG, parsed.getCommand());
+        assertEquals("2 #fun", parsed.getArguments());
+    }
+
+    @Test
     void parse_nullEmptyAndUnknownInput_exceptionThrown() {
         assertThrows(KeefException.class, () -> Parser.parse(null));
         assertThrows(KeefException.class, () -> Parser.parse("   "));
@@ -113,6 +121,22 @@ class ParserTest {
     @Test
     void parseFindKeyword_emptyKeyword_exceptionThrown() {
         assertThrows(KeefException.class, () -> Parser.parseFindKeyword(""));
+    }
+
+    @Test
+    void parseTagDetails_validDetails_trimmedFieldsReturned() throws KeefException {
+        Parser.TagDetails details = Parser.parseTagDetails("  2   #project_work ");
+
+        assertEquals("2", details.getTaskNumberText());
+        assertEquals("#project_work", details.getTag());
+    }
+
+    @Test
+    void parseTagDetails_missingOrInvalidParts_exceptionThrown() {
+        assertThrows(KeefException.class, () -> Parser.parseTagDetails(""));
+        assertThrows(KeefException.class, () -> Parser.parseTagDetails("2"));
+        assertThrows(KeefException.class, () -> Parser.parseTagDetails("2 fun"));
+        assertThrows(KeefException.class, () -> Parser.parseTagDetails("2 #"));
     }
 
     @Test

@@ -172,24 +172,28 @@ public class Storage {
         boolean isDone = "1".equals(status);
 
         Task task;
+        String tagsText;
         switch (type) {
             case "T" -> {
                 if (parts.length < 3) {
                     throw new IllegalArgumentException("missing description");
                 }
                 task = new Todo(parts[2].trim());
+                tagsText = getOptionalPart(parts, 3);
             }
             case "D" -> {
                 if (parts.length < 4) {
                     throw new IllegalArgumentException("missing fields");
                 }
                 task = new Deadline(parts[2].trim(), parts[3].trim());
+                tagsText = getOptionalPart(parts, 4);
             }
             case "E" -> {
                 if (parts.length < 5) {
                     throw new IllegalArgumentException("missing fields");
                 }
                 task = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
+                tagsText = getOptionalPart(parts, 5);
             }
             default -> {
                 System.err.println("Warning: Unknown task type in storage file: " + type);
@@ -200,7 +204,26 @@ public class Storage {
         if (isDone) {
             task.markAsDone();
         }
+        applyStoredTags(task, tagsText);
         return task;
+    }
+
+    private static String getOptionalPart(String[] parts, int index) {
+        return parts.length > index ? parts[index].trim() : "";
+    }
+
+    private static void applyStoredTags(Task task, String tagsText) {
+        if (tagsText == null || tagsText.isEmpty()) {
+            return;
+        }
+
+        String[] splitTags = tagsText.split("\\s+");
+        for (String tag : splitTags) {
+            if (tag.isEmpty()) {
+                continue;
+            }
+            task.addTag(tag);
+        }
     }
 
     /**

@@ -15,6 +15,7 @@ public enum Command {
     UNMARK("unmark", true),
     DELETE("delete", true),
     FIND("find", true),
+    TAG("tag", true),
     BYE("bye", false);
 
     private final String keyword;

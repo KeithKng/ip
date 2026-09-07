@@ -37,7 +37,7 @@ blah
 
 ```text
 Error: I don't recognise that command.
-Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, find, or bye.
+Try: Use todo, deadline, event, list, ondate, mark, unmark, delete, find, tag, or bye.
 ```
 
 #### Manual command
@@ -887,6 +887,91 @@ find
 ```text
 Error: A find command needs a keyword.
 Try: Enter: find book
+```
+
+#### Command
+
+```text
+bye
+```
+
+#### Expected output
+
+```text
+Bye. Hope to see you again soon!
+```
+
+## Test case: Tag items
+
+### Aim
+
+Verify that the `tag` command adds hashtag labels to existing tasks, rejects missing
+or malformed tags, and shows tags in list output.
+
+#### Command
+
+```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+```
+
+#### Command
+
+```text
+tag 1 #fun
+```
+
+#### Expected output
+
+```text
+Got it. I've tagged this task:
+  [T][ ] read book #fun
+```
+
+#### Command
+
+```text
+tag 1 fun
+```
+
+#### Expected output
+
+```text
+Error: Tags must start with # and use letters, digits, - or _.
+Try: Enter: tag 1 #fun
+```
+
+#### Command
+
+```text
+tag 1
+```
+
+#### Expected output
+
+```text
+Error: A tag value is required.
+Try: Enter: tag 1 #fun
+```
+
+#### Command
+
+```text
+list
+```
+
+#### Expected output
+
+```text
+Here are the tasks in your list:
+1.[T][ ] read book #fun
 ```
 
 #### Command
