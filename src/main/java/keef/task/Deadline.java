@@ -88,7 +88,8 @@ public class Deadline extends Task {
     @Override
     public String toStorageString() {
         String storedValue = byDateTime == null ? byText : formatStoredDate(byDateTime);
-        return "D | " + (isDone() ? "1" : "0") + " | " + getDescription() + " | " + storedValue;
+        return "D | " + (isDone() ? "1" : "0") + " | " + getDescription() + " | " + storedValue
+                + getStorageTagSuffix();
     }
 
     /**

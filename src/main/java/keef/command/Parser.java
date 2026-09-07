@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import keef.exception.KeefException;
 import keef.task.Deadline;
+import keef.task.Task;
 
 /**
  * Parses user-entered command text into structured command data.
@@ -45,7 +46,7 @@ public final class Parser {
         Command command = Command.fromInput(trimmed);
         if (command == null) {
             throw new KeefException("I don't recognise that command.",
-                    "Use todo, deadline, event, list, ondate, mark, unmark, delete, find, or bye.");
+                    "Use todo, deadline, event, list, ondate, mark, unmark, delete, find, tag, or bye.");
         }
 
         String keyword = command.getKeyword();
@@ -247,6 +248,31 @@ public final class Parser {
     }
 
     /**
+     * Validates and extracts a tag command's task number and tag.
+     *
+     * @param arguments text after the tag keyword
+     * @return parsed tag details
+     * @throws KeefException when the task number or tag is missing, or the tag format is invalid
+     */
+    public static TagDetails parseTagDetails(String arguments) throws KeefException {
+        if (arguments.isEmpty()) {
+            throw new KeefException("A tag command needs a task number and tag.", "Enter: tag 1 #fun");
+        }
+
+        String[] parts = arguments.trim().split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new KeefException("A tag value is required.", "Enter: tag 1 #fun");
+        }
+
+        String tag = parts[1].trim();
+        if (!Task.isValidTag(tag)) {
+            throw new KeefException("Tags must start with # and use letters, digits, - or _.",
+                    "Enter: tag 1 #fun");
+        }
+        return new TagDetails(parts[0].trim(), tag);
+    }
+
+    /**
      * Immutable parsed command data.
      */
     public static final class ParsedCommand {
@@ -312,6 +338,27 @@ public final class Parser {
 
         public String getTo() {
             return to;
+        }
+    }
+
+    /**
+     * Immutable tag-command input data.
+     */
+    public static final class TagDetails {
+        private final String taskNumberText;
+        private final String tag;
+
+        private TagDetails(String taskNumberText, String tag) {
+            this.taskNumberText = taskNumberText;
+            this.tag = tag;
+        }
+
+        public String getTaskNumberText() {
+            return taskNumberText;
+        }
+
+        public String getTag() {
+            return tag;
         }
     }
 }

@@ -182,4 +182,14 @@ public class Ui {
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + remainingTaskCount + " tasks in the list.");
     }
+
+    /**
+     * Shows that a tag was added to a task.
+     *
+     * @param task tagged task
+     */
+    public void showTaskTagged(Task task) {
+        System.out.println("Got it. I've tagged this task:");
+        System.out.println("  " + task);
+    }
 }

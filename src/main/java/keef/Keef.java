@@ -78,6 +78,7 @@ public class Keef {
             case UNMARK -> unmarkTask(parsedCommand.getArguments());
             case DELETE -> deleteTask(parsedCommand.getArguments());
             case FIND -> findTasks(parsedCommand.getArguments());
+            case TAG -> tagTask(parsedCommand.getArguments());
             case BYE -> throw new IllegalStateException("The bye command is handled before dispatch.");
             default -> throw new IllegalStateException("Unknown command.");
         }
@@ -188,6 +189,21 @@ public class Keef {
         String keyword = Parser.parseFindKeyword(arguments);
         List<Task> matchingTasks = tasks.find(keyword);
         ui.showMatchingTasks(matchingTasks);
+    }
+
+    /**
+     * Adds a tag to the task identified in the arguments, saves the list, and reports it to the user.
+     *
+     * @param arguments text after the tag keyword
+     * @throws KeefException when the task number or tag is missing, malformed, or out of range
+     */
+    private void tagTask(String arguments) throws KeefException {
+        Parser.TagDetails details = Parser.parseTagDetails(arguments);
+        int taskNumber = Parser.parseTaskNumber(details.getTaskNumberText(), tasks.size(), "tag");
+        Task task = tasks.get(taskNumber - 1);
+        task.addTag(details.getTag());
+        storage.save(tasks);
+        ui.showTaskTagged(task);
     }
 
     /**

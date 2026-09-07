@@ -82,6 +82,7 @@ public class MainWindow extends AnchorPane {
                 case UNMARK -> unmarkTask(parsedCommand.getArguments());
                 case DELETE -> deleteTask(parsedCommand.getArguments());
                 case FIND -> findTasks(parsedCommand.getArguments());
+                case TAG -> tagTask(parsedCommand.getArguments());
                 case BYE -> closeWindow();
             };
         } catch (KeefException exception) {
@@ -148,6 +149,14 @@ public class MainWindow extends AnchorPane {
     private String findTasks(String arguments) throws KeefException {
         return formatTasks("Here are the matching tasks in your list:",
                 tasks.find(Parser.parseFindKeyword(arguments)));
+    }
+
+    private String tagTask(String arguments) throws KeefException {
+        Parser.TagDetails details = Parser.parseTagDetails(arguments);
+        Task task = tasks.get(Parser.parseTaskNumber(details.getTaskNumberText(), tasks.size(), "tag") - 1);
+        task.addTag(details.getTag());
+        storage.save(tasks);
+        return "Got it. I've tagged this task:\n  " + task;
     }
 
     private String formatTasks(String heading, List<Task> taskList) {
