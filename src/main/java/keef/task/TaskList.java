@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Wraps the mutable list of tasks and exposes task-list operations.
@@ -84,10 +85,11 @@ public class TaskList {
     public List<Task> findTasksOnDate(LocalDate targetDate) {
         List<Task> matches = new ArrayList<>();
         for (Task task : tasks) {
-            if (task instanceof Deadline deadline
-                    && deadline.getByDate() != null
-                    && deadline.getByDate().equals(targetDate)) {
-                matches.add(task);
+            if (task instanceof Deadline deadline) {
+                LocalDate deadlineDate = deadline.getByDate();
+                if (deadlineDate != null && deadlineDate.equals(targetDate)) {
+                    matches.add(task);
+                }
             } else if (task instanceof Event event && event.occursOn(targetDate)) {
                 matches.add(task);
             }
@@ -103,9 +105,9 @@ public class TaskList {
      */
     public List<Task> find(String keyword) {
         List<Task> matches = new ArrayList<>();
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase(Locale.ROOT);
         for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(lowerKeyword)) {
                 matches.add(task);
             }
         }
