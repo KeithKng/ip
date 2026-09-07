@@ -25,7 +25,9 @@ public class TaskList {
      * @param tasks tasks to copy into this list
      */
     public TaskList(Task... tasks) {
+        assert tasks != null : "TaskList should always be built from a task array.";
         this.tasks = new ArrayList<>(Arrays.asList(tasks));
+        assert !this.tasks.contains(null) : "TaskList must not contain null tasks.";
     }
 
     /**
@@ -34,6 +36,7 @@ public class TaskList {
      * @param task task to add
      */
     public void add(Task task) {
+        assert task != null : "TaskList only stores real tasks.";
         tasks.add(task);
     }
 
@@ -44,6 +47,7 @@ public class TaskList {
      * @return removed task
      */
     public Task remove(int index) {
+        assert index >= 0 && index < tasks.size() : "Task removal index should already be validated.";
         return tasks.remove(index);
     }
 
@@ -54,6 +58,7 @@ public class TaskList {
      * @return task at index
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Task lookup index should already be validated.";
         return tasks.get(index);
     }
 
@@ -82,6 +87,7 @@ public class TaskList {
      * @return matching tasks in current list order
      */
     public List<Task> findTasksOnDate(LocalDate targetDate) {
+        assert targetDate != null : "Date filtering requires a target date.";
         List<Task> matches = new ArrayList<>();
         for (Task task : tasks) {
             if (task instanceof Deadline deadline
@@ -102,6 +108,7 @@ public class TaskList {
      * @return matching tasks in current list order
      */
     public List<Task> find(String keyword) {
+        assert keyword != null : "Keyword search requires a keyword.";
         List<Task> matches = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
         for (Task task : tasks) {
