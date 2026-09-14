@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,6 +24,7 @@ import keef.task.TaskList;
 /**
  * Controls the tutorial-style conversation window for Keef.
  */
+@SuppressWarnings("unused")
 public class MainWindow extends AnchorPane {
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
@@ -33,11 +35,17 @@ public class MainWindow extends AnchorPane {
     @FXML
     private TextField userInput;
 
-    private final Image userImage = new Image(MainWindow.class.getResourceAsStream("/images/DaUser.png"));
-    private final Image keefImage = new Image(MainWindow.class.getResourceAsStream("/images/DaDuke.png"));
+    private final Image userImage = loadImage("/images/DaUser.png");
+    private final Image keefImage = loadImage("/images/DaDuke.png");
     private final Storage storage = new Storage("data\\keef.txt");
     private TaskList tasks;
     private boolean lastResponseWasError;
+
+    /** Loads an image bundled with the application. */
+    private static Image loadImage(String resourcePath) {
+        return new Image(Objects.requireNonNull(MainWindow.class.getResourceAsStream(resourcePath),
+                "Missing image resource: " + resourcePath));
+    }
 
     /**
      * Initializes the task list and keeps new messages visible.

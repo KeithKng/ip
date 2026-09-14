@@ -18,6 +18,7 @@ import javafx.scene.shape.Circle;
 /**
  * Represents one speaker's message in the conversation view.
  */
+@SuppressWarnings("unused")
 public class DialogBox extends HBox {
     @FXML
     private Label dialog;
