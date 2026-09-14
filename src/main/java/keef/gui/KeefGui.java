@@ -37,7 +37,8 @@ public class KeefGui extends Application {
     @Override
     public void start(Stage stage) {
         tasks = loadTasks();
-        conversation = new TextArea("Hello! I'm Keef.\nType a command below.\n");
+        conversation = new TextArea("Hello! I'm Aster, your stargazing task companion.\n"
+                + "Let's plot a clear course through your day.\n");
         conversation.setEditable(false);
         conversation.setWrapText(true);
 
@@ -51,7 +52,7 @@ public class KeefGui extends Application {
         inputBar.setPadding(new Insets(10));
         BorderPane root = new BorderPane(conversation, null, null, inputBar, null);
         root.setPadding(new Insets(10));
-        stage.setTitle("Keef");
+        stage.setTitle("Aster — Task Constellation");
         stage.setScene(new Scene(root, 600, 400));
         stage.show();
     }
