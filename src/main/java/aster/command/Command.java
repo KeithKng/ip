@@ -1,9 +1,9 @@
-package keef.command;
+package aster.command;
 
 import java.util.Arrays;
 
 /**
- * The commands the Keef task-list application understands.
+ * The commands the Aster task-list application understands.
  */
 public enum Command {
     TODO("todo", true),

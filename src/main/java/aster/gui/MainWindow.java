@@ -1,4 +1,4 @@
-package keef.gui;
+package aster.gui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,14 +15,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import keef.command.Parser;
-import keef.exception.KeefException;
-import keef.storage.Storage;
-import keef.task.Task;
-import keef.task.TaskList;
+import aster.command.Parser;
+import aster.exception.AsterException;
+import aster.storage.Storage;
+import aster.task.Task;
+import aster.task.TaskList;
 
 /**
- * Controls the tutorial-style conversation window for Keef.
+ * Controls the tutorial-style conversation window for Aster.
  */
 @SuppressWarnings("unused")
 public class MainWindow extends AnchorPane {
@@ -36,8 +36,8 @@ public class MainWindow extends AnchorPane {
     private TextField userInput;
 
     private final Image userImage = loadImage("/images/default-user.png");
-    private final Image keefImage = loadImage("/images/aster-bot.png");
-    private final Storage storage = new Storage("data\\keef.txt");
+    private final Image asterImage = loadImage("/images/aster-bot.png");
+    private final Storage storage = new Storage("data\\aster.txt");
     private TaskList tasks;
     private boolean lastResponseWasError;
 
@@ -67,14 +67,14 @@ public class MainWindow extends AnchorPane {
         }
         String response = process(input);
         dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage),
-                DialogBox.getKeefDialog(response, keefImage, lastResponseWasError));
+                DialogBox.getAsterDialog(response, asterImage, lastResponseWasError));
         userInput.clear();
     }
 
     private TaskList loadTasks() {
         try {
             return new TaskList(storage.load().toArray(Task[]::new));
-        } catch (KeefException exception) {
+        } catch (AsterException exception) {
             return new TaskList();
         }
     }
@@ -96,30 +96,30 @@ public class MainWindow extends AnchorPane {
                 case TAG -> tagTask(parsedCommand.getArguments());
                 case BYE -> closeWindow();
             };
-        } catch (KeefException exception) {
+        } catch (AsterException exception) {
             lastResponseWasError = true;
             return exception.getUserMessage();
         }
     }
 
-    private String addTodo(String arguments) throws KeefException {
-        Task task = new keef.task.Todo(Parser.parseTodoDescription(arguments));
+    private String addTodo(String arguments) throws AsterException {
+        Task task = new aster.task.Todo(Parser.parseTodoDescription(arguments));
         tasks.add(task);
         storage.save(tasks);
         return taskAdded(task);
     }
 
-    private String addDeadline(String arguments) throws KeefException {
+    private String addDeadline(String arguments) throws AsterException {
         Parser.DeadlineDetails details = Parser.parseDeadlineDetails(arguments);
-        Task task = new keef.task.Deadline(details.getDescription(), details.getBy());
+        Task task = new aster.task.Deadline(details.getDescription(), details.getBy());
         tasks.add(task);
         storage.save(tasks);
         return taskAdded(task);
     }
 
-    private String addEvent(String arguments) throws KeefException {
+    private String addEvent(String arguments) throws AsterException {
         Parser.EventDetails details = Parser.parseEventDetails(arguments);
-        Task task = new keef.task.Event(details.getDescription(), details.getFrom(), details.getTo());
+        Task task = new aster.task.Event(details.getDescription(), details.getFrom(), details.getTo());
         tasks.add(task);
         storage.save(tasks);
         return taskAdded(task);
@@ -130,40 +130,40 @@ public class MainWindow extends AnchorPane {
                 + "\nYour orbit now holds " + tasks.size() + " tasks.";
     }
 
-    private String showTasksOnDate(String arguments) throws KeefException {
+    private String showTasksOnDate(String arguments) throws AsterException {
         LocalDate date = Parser.parseOnDate(arguments);
         return formatTasks("Here are the tasks on " + date.format(DISPLAY_DATE_FORMAT) + ":",
                 tasks.findTasksOnDate(date), "No tasks are scheduled for "
                         + date.format(DISPLAY_DATE_FORMAT) + ".");
     }
 
-    private String markTask(String arguments) throws KeefException {
+    private String markTask(String arguments) throws AsterException {
         Task task = tasks.get(Parser.parseTaskNumber(arguments, tasks.size(), "mark") - 1);
         task.markAsDone();
         storage.save(tasks);
         return "Nice! I've marked this task as done:\n  " + task;
     }
 
-    private String unmarkTask(String arguments) throws KeefException {
+    private String unmarkTask(String arguments) throws AsterException {
         Task task = tasks.get(Parser.parseTaskNumber(arguments, tasks.size(), "unmark") - 1);
         task.markAsNotDone();
         storage.save(tasks);
         return "OK, I've marked this task as not done yet:\n  " + task;
     }
 
-    private String deleteTask(String arguments) throws KeefException {
+    private String deleteTask(String arguments) throws AsterException {
         Task task = tasks.remove(Parser.parseTaskNumber(arguments, tasks.size(), "delete") - 1);
         storage.save(tasks);
         return "Noted. I've removed this task:\n  " + task
                 + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
-    private String findTasks(String arguments) throws KeefException {
+    private String findTasks(String arguments) throws AsterException {
         return formatTasks("These tasks match your signal:",
                 tasks.find(Parser.parseFindKeyword(arguments)));
     }
 
-    private String tagTask(String arguments) throws KeefException {
+    private String tagTask(String arguments) throws AsterException {
         Parser.TagDetails details = Parser.parseTagDetails(arguments);
         Task task = tasks.get(Parser.parseTaskNumber(details.getTaskNumberText(), tasks.size(), "tag") - 1);
         task.addTag(details.getTag());

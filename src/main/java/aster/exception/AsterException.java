@@ -1,15 +1,15 @@
-package keef.exception;
+package aster.exception;
 
 /**
- * Represents an invalid command entered into the Keef chatbot.
+ * Represents an invalid command entered into the Aster chatbot.
  */
-public class KeefException extends Exception {
+public class AsterException extends Exception {
     private final String suggestion;
 
     /**
      * Creates an exception with an explanation and a way to correct the command.
      */
-    public KeefException(String message, String suggestion) {
+    public AsterException(String message, String suggestion) {
         super(message);
         this.suggestion = suggestion;
     }

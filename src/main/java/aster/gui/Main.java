@@ -1,4 +1,4 @@
-package keef.gui;
+package aster.gui;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * Starts the FXML-based Keef user interface.
+ * Starts the FXML-based Aster user interface.
  */
 public class Main extends Application {
     /**
@@ -24,13 +24,13 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             stage.setScene(new Scene(root));
-            stage.setTitle("Aster — Task Constellation");
+            stage.setTitle("Aster");
             stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/aster-bot.png")));
             stage.setMinHeight(220);
             stage.setMinWidth(417);
             stage.show();
         } catch (IOException exception) {
-            throw new IllegalStateException("Unable to load the Keef GUI.", exception);
+            throw new IllegalStateException("Unable to load the Aster GUI.", exception);
         }
     }
 }

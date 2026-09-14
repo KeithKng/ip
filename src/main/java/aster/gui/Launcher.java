@@ -1,4 +1,4 @@
-package keef.gui;
+package aster.gui;
 
 import javafx.application.Application;
 

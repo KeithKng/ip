@@ -1,4 +1,4 @@
-package keef.gui;
+package aster.gui;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -58,8 +58,8 @@ public class DialogBox extends HBox {
      * @param image speaker image.
      * @return Aster dialog box.
      */
-    public static DialogBox getKeefDialog(String text, Image image) {
-        return getKeefDialog(text, image, false);
+    public static DialogBox getAsterDialog(String text, Image image) {
+        return getAsterDialog(text, image, false);
     }
 
     /** Creates an Aster response with optional error styling.
@@ -69,7 +69,7 @@ public class DialogBox extends HBox {
      * @param isError whether the response reports an invalid command.
      * @return Aster dialog box.
      */
-    public static DialogBox getKeefDialog(String text, Image image, boolean isError) {
+    public static DialogBox getAsterDialog(String text, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(text, image);
         ObservableList<Node> children = FXCollections.observableArrayList(dialogBox.getChildren());
         Collections.reverse(children);

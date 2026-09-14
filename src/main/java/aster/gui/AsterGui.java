@@ -1,4 +1,4 @@
-package keef.gui;
+package aster.gui;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,18 +14,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import keef.command.Command;
-import keef.command.Parser;
-import keef.exception.KeefException;
-import keef.storage.Storage;
-import keef.task.Task;
-import keef.task.TaskList;
+import aster.command.Command;
+import aster.command.Parser;
+import aster.exception.AsterException;
+import aster.storage.Storage;
+import aster.task.Task;
+import aster.task.TaskList;
 
 /**
- * Provides a JavaFX interface for entering Keef commands and viewing responses.
+ * Provides a JavaFX interface for entering Aster commands and viewing responses.
  */
-public class KeefGui extends Application {
-    private final Storage storage = new Storage("data\\keef.txt");
+public class AsterGui extends Application {
+    private final Storage storage = new Storage("data\\aster.txt");
     private TaskList tasks;
     private TextArea conversation;
 
@@ -52,7 +52,7 @@ public class KeefGui extends Application {
         inputBar.setPadding(new Insets(10));
         BorderPane root = new BorderPane(conversation, null, null, inputBar, null);
         root.setPadding(new Insets(10));
-        stage.setTitle("Aster — Task Constellation");
+        stage.setTitle("Aster");
         stage.setScene(new Scene(root, 600, 400));
         stage.show();
     }
@@ -60,7 +60,7 @@ public class KeefGui extends Application {
     private TaskList loadTasks() {
         try {
             return new TaskList(storage.load().toArray(Task[]::new));
-        } catch (KeefException exception) {
+        } catch (AsterException exception) {
             return new TaskList();
         }
     }
@@ -82,7 +82,7 @@ public class KeefGui extends Application {
             }
             return "The GUI currently supports viewing tasks; use the CLI for task changes.\n"
                     + "Try: list or bye";
-        } catch (KeefException exception) {
+        } catch (AsterException exception) {
             return exception.getUserMessage();
         }
     }

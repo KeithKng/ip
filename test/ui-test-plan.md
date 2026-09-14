@@ -3,7 +3,7 @@
 ## Program
 
 - Compile with Java 25: `./gradlew classes`
-- Run command: `java -cp out keef.Keef`
+- Run command: `java -cp out aster.Aster`
 - The expected-output blocks below contain a command's response body. The runner
   also records the surrounding divider lines in its console transcript.
 
@@ -1086,7 +1086,7 @@ Here are the tasks in your list:
 
 #### Manual setup
 
-Create a malformed file at `data/keef.txt` such as:
+Create a malformed file at `data/aster.txt` such as:
 
 ```text
 T | 1 | read book
@@ -1107,6 +1107,6 @@ Here are the tasks in your list:
 ```
 
 The malformed file should be ignored and, if enough lines are unreadable, moved to
-`data/keef.txt.corrupt.<timestamp>` before startup continues with an empty list.
+`data/aster.txt.corrupt.<timestamp>` before startup continues with an empty list.
 The default UI runner intentionally removes `data` before each case, so this
 validation is best performed as a separate manual smoke test.

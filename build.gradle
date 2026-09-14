@@ -38,7 +38,7 @@ test {
 }
 
 application {
-    mainClass = 'keef.gui.Launcher'
+    mainClass = 'aster.gui.Launcher'
 }
 
 javafx {
@@ -59,7 +59,7 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'aster.jar'
 }
 
 run {

@@ -1,4 +1,4 @@
-package keef.storage;
+package aster.storage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,13 +10,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import keef.Keef;
-import keef.exception.KeefException;
-import keef.task.Deadline;
-import keef.task.Event;
-import keef.task.Task;
-import keef.task.TaskList;
-import keef.task.Todo;
+import aster.Aster;
+import aster.exception.AsterException;
+import aster.task.Deadline;
+import aster.task.Event;
+import aster.task.Task;
+import aster.task.TaskList;
+import aster.task.Todo;
 
 /**
  * Persists tasks to disk and reconstructs them from storage.
@@ -37,9 +37,9 @@ public class Storage {
      * Loads tasks from storage.
      *
      * @return list of loaded tasks
-     * @throws KeefException when the storage file cannot be read
+     * @throws AsterException when the storage file cannot be read
      */
-    public List<Task> load() throws KeefException {
+    public List<Task> load() throws AsterException {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(storagePath)) {
             return tasks;
@@ -49,7 +49,7 @@ public class Storage {
         try {
             lines = Files.readAllLines(storagePath, StandardCharsets.UTF_8);
         } catch (IOException | SecurityException e) {
-            throw new KeefException("Unable to read storage file: " + storagePath,
+            throw new AsterException("Unable to read storage file: " + storagePath,
                     "Check that the file and directory can be read.");
         }
 
@@ -83,9 +83,9 @@ public class Storage {
      * Saves tasks to storage.
      *
      * @param taskList tasks to persist
-     * @throws KeefException when saving fails
+     * @throws AsterException when saving fails
      */
-    public void save(TaskList taskList) throws KeefException {
+    public void save(TaskList taskList) throws AsterException {
         assert taskList != null : "Storage save should always receive a task list.";
         List<String> lines = taskList.getAll().stream()
                 .map(task -> {
@@ -111,7 +111,7 @@ public class Storage {
             }
         } catch (IOException | SecurityException e) {
             cleanupTempFile(tempFile);
-            throw new KeefException("I couldn't save your tasks.",
+            throw new AsterException("I couldn't save your tasks.",
                     "Check that the data folder is writable and try again.");
         }
     }
@@ -143,7 +143,7 @@ public class Storage {
      */
     private static Path findRepositoryRoot() {
         try {
-            Path codeLocation = Paths.get(Keef.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+            Path codeLocation = Paths.get(Aster.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                     .toAbsolutePath();
             Path cursor = Files.isRegularFile(codeLocation) ? codeLocation.getParent() : codeLocation;
             while (cursor != null) {

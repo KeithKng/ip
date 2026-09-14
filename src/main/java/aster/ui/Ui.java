@@ -1,4 +1,4 @@
-package keef.ui;
+package aster.ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -7,11 +7,11 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-import keef.task.Task;
-import keef.task.TaskList;
+import aster.task.Task;
+import aster.task.TaskList;
 
 /**
- * Handles all command-line input and output for the Keef application.
+ * Handles all command-line input and output for the Aster application.
  */
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";
