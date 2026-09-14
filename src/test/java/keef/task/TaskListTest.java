@@ -1,7 +1,9 @@
 package keef.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
@@ -98,5 +100,31 @@ class TaskListTest {
         TaskList taskList = new TaskList(new Todo("read book"));
 
         assertEquals(List.of(), taskList.find("laptop"));
+    }
+
+    @Test
+    void containsTaskWithSameDetails_matchingTodoDeadlineAndEvent_trueReturned() {
+        TaskList taskList = new TaskList(
+                new Todo("read book"),
+                new Deadline("submit report", "2026-09-01"),
+                new Event("meeting", "2026-09-01 09:00", "2026-09-01 10:00"));
+
+        assertTrue(taskList.containsTaskWithSameDetails(new Todo("read book")));
+        assertTrue(taskList.containsTaskWithSameDetails(new Deadline("submit report", "2026-09-01")));
+        assertTrue(taskList.containsTaskWithSameDetails(
+                new Event("meeting", "2026-09-01 09:00", "2026-09-01 10:00")));
+    }
+
+    @Test
+    void containsTaskWithSameDetails_differentTypeOrDifferentDetails_falseReturned() {
+        TaskList taskList = new TaskList(
+                new Todo("read book"),
+                new Deadline("submit report", "2026-09-01"),
+                new Event("meeting", "2026-09-01 09:00", "2026-09-01 10:00"));
+
+        assertFalse(taskList.containsTaskWithSameDetails(new Deadline("read book", "2026-09-01")));
+        assertFalse(taskList.containsTaskWithSameDetails(new Deadline("submit report", "2026-09-02")));
+        assertFalse(taskList.containsTaskWithSameDetails(
+                new Event("meeting", "2026-09-01 11:00", "2026-09-01 12:00")));
     }
 }
