@@ -39,8 +39,8 @@ public class Ui {
     public void showWelcome() {
         showLine();
         System.out.println(BANNER);
-        System.out.println("Hello! I'm Keef.");
-        System.out.println("What can I do for you?");
+        System.out.println("Hello! I'm Aster, your stargazing task companion.");
+        System.out.println("Let's plot a clear course through your day.");
         showLine();
     }
 
@@ -48,7 +48,7 @@ public class Ui {
      * Shows the goodbye message.
      */
     public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("Until next time - keep your goals in orbit!");
     }
 
     /**

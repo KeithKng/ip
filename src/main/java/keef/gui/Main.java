@@ -24,8 +24,8 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             stage.setScene(new Scene(root));
-            stage.setTitle("Keef");
-            stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/DaDuke.png")));
+            stage.setTitle("Aster — Task Constellation");
+            stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/aster-bot.png")));
             stage.setMinHeight(220);
             stage.setMinWidth(417);
             stage.show();

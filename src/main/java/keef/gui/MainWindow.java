@@ -35,8 +35,8 @@ public class MainWindow extends AnchorPane {
     @FXML
     private TextField userInput;
 
-    private final Image userImage = loadImage("/images/DaUser.png");
-    private final Image keefImage = loadImage("/images/DaDuke.png");
+    private final Image userImage = loadImage("/images/default-user.png");
+    private final Image keefImage = loadImage("/images/aster-bot.png");
     private final Storage storage = new Storage("data\\keef.txt");
     private TaskList tasks;
     private boolean lastResponseWasError;
@@ -87,7 +87,7 @@ public class MainWindow extends AnchorPane {
                 case TODO -> addTodo(parsedCommand.getArguments());
                 case DEADLINE -> addDeadline(parsedCommand.getArguments());
                 case EVENT -> addEvent(parsedCommand.getArguments());
-                case LIST -> formatTasks("Here are the tasks in your list:", tasks.getAll());
+                case LIST -> formatTasks("Your constellation of tasks:", tasks.getAll());
                 case ONDATE -> showTasksOnDate(parsedCommand.getArguments());
                 case MARK -> markTask(parsedCommand.getArguments());
                 case UNMARK -> unmarkTask(parsedCommand.getArguments());
@@ -126,8 +126,8 @@ public class MainWindow extends AnchorPane {
     }
 
     private String taskAdded(Task task) {
-        return "Got it. I've added this task:\n  " + task
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        return "A new star is on your chart:\n  " + task
+                + "\nYour orbit now holds " + tasks.size() + " tasks.";
     }
 
     private String showTasksOnDate(String arguments) throws KeefException {
@@ -159,7 +159,7 @@ public class MainWindow extends AnchorPane {
     }
 
     private String findTasks(String arguments) throws KeefException {
-        return formatTasks("Here are the matching tasks in your list:",
+        return formatTasks("These tasks match your signal:",
                 tasks.find(Parser.parseFindKeyword(arguments)));
     }
 
@@ -168,7 +168,7 @@ public class MainWindow extends AnchorPane {
         Task task = tasks.get(Parser.parseTaskNumber(details.getTaskNumberText(), tasks.size(), "tag") - 1);
         task.addTag(details.getTag());
         storage.save(tasks);
-        return "Got it. I've tagged this task:\n  " + task;
+        return "Constellation note added:\n  " + task;
     }
 
     private String formatTasks(String heading, List<Task> taskList) {
@@ -177,7 +177,7 @@ public class MainWindow extends AnchorPane {
 
     private String formatTasks(String heading, List<Task> taskList, String emptyMessage) {
         if (taskList.isEmpty()) {
-            return emptyMessage;
+            return "The sky is clear—no tasks here yet.";
         }
         return IntStream.range(0, taskList.size())
                 .mapToObj(index -> (index + 1) + "." + taskList.get(index))
@@ -187,6 +187,6 @@ public class MainWindow extends AnchorPane {
     private String closeWindow() {
         Window window = getScene().getWindow();
         window.hide();
-        return "Bye. Hope to see you again soon!";
+        return "Until next time - keep your goals in orbit!";
     }
 }

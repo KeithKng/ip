@@ -338,7 +338,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Delete a task
@@ -427,7 +427,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Add, mark, and unmark to-do tasks
@@ -543,7 +543,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Add and list events
@@ -604,7 +604,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Add and list deadlines
@@ -678,7 +678,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Filter tasks by date
@@ -738,7 +738,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Save after task-list changes
@@ -798,7 +798,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Find tasks by keyword
@@ -898,7 +898,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Test case: Tag items
@@ -983,7 +983,7 @@ bye
 #### Expected output
 
 ```text
-Bye. Hope to see you again soon!
+Until next time - keep your goals in orbit!
 ```
 
 ## Manual storage robustness checks

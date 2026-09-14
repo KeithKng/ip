@@ -52,22 +52,22 @@ public class DialogBox extends HBox {
     }
 
     /**
-     * Creates a left-aligned Keef response.
+     * Creates a left-aligned Aster response.
      *
      * @param text response text.
      * @param image speaker image.
-     * @return Keef dialog box.
+     * @return Aster dialog box.
      */
     public static DialogBox getKeefDialog(String text, Image image) {
         return getKeefDialog(text, image, false);
     }
 
-    /** Creates a Keef response with optional error styling.
+    /** Creates an Aster response with optional error styling.
      *
      * @param text response text.
      * @param image speaker image.
      * @param isError whether the response reports an invalid command.
-     * @return Keef dialog box.
+     * @return Aster dialog box.
      */
     public static DialogBox getKeefDialog(String text, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(text, image);
