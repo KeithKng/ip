@@ -71,6 +71,15 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns the raw due-date text entered for this deadline.
+     *
+     * @return raw due-date text
+     */
+    public String getByText() {
+        return byText;
+    }
+
+    /**
      * Returns this deadline in the command-line display format.
      *
      * @return deadline type marker, status marker, description, and due text

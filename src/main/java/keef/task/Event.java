@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Represents a task that takes place between a specified start and end time.
@@ -46,8 +47,8 @@ public class Event extends Task {
      * @return {@code true} when the target date falls within the event interval
      */
     public boolean occursOn(LocalDate targetDate) {
-        LocalDateTime start = parseDateTime(from);
-        LocalDateTime end = parseDateTime(to);
+        LocalDateTime start = parseDateTime(from).orElse(null);
+        LocalDateTime end = parseDateTime(to).orElse(null);
         if (start == null || end == null) {
             return false;
         }
@@ -78,23 +79,51 @@ public class Event extends Task {
     }
 
     /**
+     * Returns the raw start text entered for this event.
+     *
+     * @return raw start text
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    /**
+     * Returns the raw end text entered for this event.
+     *
+     * @return raw end text
+     */
+    public String getTo() {
+        return to;
+    }
+
+    /**
+     * Attempts to parse text as a supported date or date-time.
+     *
+     * @param text raw date/time text
+     * @return parsed date-time when successful, otherwise {@link Optional#empty()}
+     */
+    public static Optional<LocalDateTime> tryParseDateTime(String text) {
+        return parseDateTime(text);
+    }
+
+    /**
      * Attempts to parse the given text as a date or date-time in one of the supported formats.
      *
      * @param text raw start or end text
      * @return parsed date-time, or {@code null} when the text does not match any supported format
      */
-    private static LocalDateTime parseDateTime(String text) {
+    private static Optional<LocalDateTime> parseDateTime(String text) {
         if (text == null) {
-            return null;
+            return Optional.empty();
         }
         String trimmed = text.trim();
         if (trimmed.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
-                return LocalDateTime.parse(trimmed, formatter);
+                return Optional.of(LocalDateTime.parse(trimmed, formatter));
             } catch (DateTimeParseException ignored) {
                 // fall through to next format
             }
@@ -105,11 +134,11 @@ public class Event extends Task {
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
                 LocalDate date = LocalDate.parse(trimmed, formatter);
-                return date.atStartOfDay();
+                return Optional.of(date.atStartOfDay());
             } catch (DateTimeParseException ignored) {
                 // fall through to next format
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

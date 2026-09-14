@@ -108,6 +108,17 @@ public class TaskList {
                 .toList();
     }
 
+    /**
+     * Returns whether a task with the same details already exists in this list.
+     *
+     * @param candidate task to check
+     * @return {@code true} when an equivalent task is already present
+     */
+    public boolean containsTaskWithSameDetails(Task candidate) {
+        assert candidate != null : "Duplicate checks require a candidate task.";
+        return tasks.stream().anyMatch(task -> hasSameDetails(task, candidate));
+    }
+
     private static boolean matchesDate(Task task, LocalDate targetDate) {
         assert targetDate != null : "Date filtering requires a target date.";
         if (task instanceof Deadline deadline) {
@@ -115,5 +126,22 @@ public class TaskList {
             return dueDate != null && dueDate.equals(targetDate);
         }
         return task instanceof Event event && event.occursOn(targetDate);
+    }
+
+    private static boolean hasSameDetails(Task first, Task second) {
+        if (!first.getClass().equals(second.getClass())) {
+            return false;
+        }
+        if (!first.getDescription().equals(second.getDescription())) {
+            return false;
+        }
+        if (first instanceof Deadline firstDeadline && second instanceof Deadline secondDeadline) {
+            return firstDeadline.getByText().equals(secondDeadline.getByText());
+        }
+        if (first instanceof Event firstEvent && second instanceof Event secondEvent) {
+            return firstEvent.getFrom().equals(secondEvent.getFrom())
+                    && firstEvent.getTo().equals(secondEvent.getTo());
+        }
+        return true;
     }
 }

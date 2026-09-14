@@ -95,6 +95,19 @@ Try: Add a value after /by, for example: deadline return book /by 2019-12-02
 #### Command
 
 ```text
+deadline return book /by 2019-12-02 /by 2019-12-03
+```
+
+#### Expected output
+
+```text
+Error: The /by marker should only appear once.
+Try: Use exactly one /by in: deadline ... /by ...
+```
+
+#### Command
+
+```text
 deadline return book /by Sunday
 ```
 
@@ -214,6 +227,45 @@ Try: Add a value after /to.
 #### Command
 
 ```text
+event project meeting /from 2019-12-02 14:00 /to 2019-12-02 14:00
+```
+
+#### Expected output
+
+```text
+Error: The event start date/time must be earlier than the end date/time.
+Try: Use: event project meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00
+```
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm /from Tue 3pm /to 4pm
+```
+
+#### Expected output
+
+```text
+Error: The /from marker should only appear once.
+Try: Use exactly one /from in: event ... /from ...
+```
+
+#### Command
+
+```text
+event project meeting /from Mon 2pm /to 4pm /to 5pm
+```
+
+#### Expected output
+
+```text
+Error: The /to marker should only appear once.
+Try: Use exactly one /to in: event ... /to ...
+```
+
+#### Command
+
+```text
 mark
 ```
 
@@ -254,6 +306,19 @@ Now you have 3 tasks in the list.
 #### Command
 
 ```text
+todo read book
+```
+
+#### Expected output
+
+```text
+Error: That task already exists in your list.
+Try: Use list to review existing tasks before adding another.
+```
+
+#### Command
+
+```text
 unmark
 ```
 
@@ -274,6 +339,19 @@ mark one
 
 ```text
 Error: The task number must contain digits only.
+Try: Enter: mark 1
+```
+
+#### Command
+
+```text
+mark 1 2
+```
+
+#### Expected output
+
+```text
+Error: Only one task number is allowed.
 Try: Enter: mark 1
 ```
 

@@ -93,6 +93,7 @@ public class Keef {
     private void addTodo(String arguments) throws KeefException {
         String description = Parser.parseTodoDescription(arguments);
         Task task = new Todo(description);
+        ensureTaskIsUnique(task);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -107,6 +108,7 @@ public class Keef {
     private void addDeadline(String arguments) throws KeefException {
         Parser.DeadlineDetails details = Parser.parseDeadlineDetails(arguments);
         Task task = new Deadline(details.getDescription(), details.getBy());
+        ensureTaskIsUnique(task);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -121,6 +123,7 @@ public class Keef {
     private void addEvent(String arguments) throws KeefException {
         Parser.EventDetails details = Parser.parseEventDetails(arguments);
         Task task = new Event(details.getDescription(), details.getFrom(), details.getTo());
+        ensureTaskIsUnique(task);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -204,6 +207,19 @@ public class Keef {
         task.addTag(details.getTag());
         storage.save(tasks);
         ui.showTaskTagged(task);
+    }
+
+    /**
+     * Ensures newly-created tasks do not duplicate existing task details.
+     *
+     * @param candidate task about to be added
+     * @throws KeefException when an equivalent task already exists
+     */
+    private void ensureTaskIsUnique(Task candidate) throws KeefException {
+        if (tasks.containsTaskWithSameDetails(candidate)) {
+            throw new KeefException("That task already exists in your list.",
+                    "Use list to review existing tasks before adding another.");
+        }
     }
 
     /**

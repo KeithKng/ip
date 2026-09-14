@@ -69,6 +69,7 @@ class ParserTest {
         assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("/by 2026-09-01"));
         assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("submit report /by"));
         assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("submit /bydate"));
+        assertThrows(KeefException.class, () -> Parser.parseDeadlineDetails("submit /by 2026-09-01 /by 2026-09-02"));
     }
 
     @Test
@@ -96,6 +97,12 @@ class ParserTest {
         assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from /to noon"));
         assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from 9am /to"));
         assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /fromtime 9am /to noon"));
+        assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from 2026-09-01 /to 2026-09-01"));
+        assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from 2026-09-02 /to 2026-09-01"));
+        assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from 2026-09-01 /from 2026-09-02"
+                + " /to 2026-09-03"));
+        assertThrows(KeefException.class, () -> Parser.parseEventDetails("meeting /from 2026-09-01 /to 2026-09-02"
+                + " /to 2026-09-03"));
     }
 
     @Test
@@ -149,6 +156,7 @@ class ParserTest {
     void parseTaskNumber_missingMalformedOutOfRangeOrOverflowNumber_exceptionThrown() {
         assertThrows(KeefException.class, () -> Parser.parseTaskNumber("1", 0, "mark"));
         assertThrows(KeefException.class, () -> Parser.parseTaskNumber("", 3, "mark"));
+        assertThrows(KeefException.class, () -> Parser.parseTaskNumber("1 2", 3, "mark"));
         assertThrows(KeefException.class, () -> Parser.parseTaskNumber("1.0", 3, "mark"));
         assertThrows(KeefException.class, () -> Parser.parseTaskNumber("0", 3, "mark"));
         assertThrows(KeefException.class, () -> Parser.parseTaskNumber("4", 3, "mark"));

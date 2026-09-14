@@ -1,6 +1,7 @@
 package keef.command;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 import keef.exception.KeefException;
 import keef.task.Deadline;
+import keef.task.Event;
 import keef.task.Task;
 
 /**
@@ -76,7 +78,7 @@ public final class Parser {
      * @throws KeefException when description or /by value is missing
      */
     public static DeadlineDetails parseDeadlineDetails(String arguments) throws KeefException {
-        int byMarkerIndex = findMarker(arguments, "/by");
+        int byMarkerIndex = findUniqueMarker(arguments, "/by", "deadline");
         if (byMarkerIndex < 0) {
             throw new KeefException("A deadline needs a /by date or time.",
                     "Enter: deadline return book /by 2019-12-02");
@@ -107,8 +109,8 @@ public final class Parser {
      * @throws KeefException when required fields are missing or malformed
      */
     public static EventDetails parseEventDetails(String arguments) throws KeefException {
-        int fromMarkerIndex = findMarker(arguments, "/from");
-        int toMarkerIndex = findMarker(arguments, "/to");
+        int fromMarkerIndex = findUniqueMarker(arguments, "/from", "event");
+        int toMarkerIndex = findUniqueMarker(arguments, "/to", "event");
         if (fromMarkerIndex < 0) {
             throw new KeefException("An event needs a /from start time.",
                     "Enter: event project meeting /from Mon 2pm /to 4pm");
@@ -135,6 +137,7 @@ public final class Parser {
         if (to.isEmpty()) {
             throw new KeefException("The event end time is missing.", "Add a value after /to.");
         }
+        validateEventDateOrder(from, to);
         return new EventDetails(description, from, to);
     }
 
@@ -176,10 +179,16 @@ public final class Parser {
         if (numberText.isEmpty()) {
             throw new KeefException("A task number is required.", "Enter: " + commandName + " 1");
         }
+        String[] numberParts = numberText.trim().split("\\s+");
+        if (numberParts.length > 1) {
+            throw new KeefException("Only one task number is allowed.",
+                    "Enter: " + commandName + " 1");
+        }
+        String normalizedNumberText = numberParts[0];
 
         int taskNumber = 0;
-        for (int i = 0; i < numberText.length(); i++) {
-            char character = numberText.charAt(i);
+        for (int i = 0; i < normalizedNumberText.length(); i++) {
+            char character = normalizedNumberText.charAt(i);
             if (!Character.isDigit(character)) {
                 throw new KeefException("The task number must contain digits only.",
                         "Enter: " + commandName + " 1");
@@ -206,16 +215,89 @@ public final class Parser {
      * @return index of the marker, or {@code -1} when it is absent or not whitespace-delimited
      */
     private static int findMarker(String details, String marker) {
-        int markerIndex = details.indexOf(marker);
-        if (markerIndex < 0) {
+        int searchFrom = 0;
+        while (searchFrom < details.length()) {
+            int markerIndex = details.indexOf(marker, searchFrom);
+            if (markerIndex < 0) {
+                return -1;
+            }
+            int markerEndIndex = markerIndex + marker.length();
+            boolean hasWhitespaceBefore = markerIndex == 0 || Character.isWhitespace(details.charAt(markerIndex - 1));
+            boolean hasWhitespaceAfter = markerEndIndex == details.length()
+                    || Character.isWhitespace(details.charAt(markerEndIndex));
+            if (hasWhitespaceBefore && hasWhitespaceAfter) {
+                return markerIndex;
+            }
+            searchFrom = markerIndex + marker.length();
+        }
+        return -1;
+    }
+
+    /**
+     * Finds a unique whitespace-delimited marker in command details.
+     *
+     * @param details text to search
+     * @param marker marker token to find
+     * @param commandName command keyword used in recovery messages
+     * @return index of the marker, or {@code -1} when no delimited marker is present
+     * @throws KeefException when the marker appears more than once
+     */
+    private static int findUniqueMarker(String details, String marker, String commandName) throws KeefException {
+        int markerCount = countDelimitedMarkers(details, marker);
+        if (markerCount == 0) {
             return -1;
         }
+        if (markerCount > 1) {
+            throw new KeefException("The " + marker + " marker should only appear once.",
+                    "Use exactly one " + marker + " in: " + commandName + " ... " + marker + " ...");
+        }
+        return findMarker(details, marker);
+    }
 
-        int markerEndIndex = markerIndex + marker.length();
-        boolean hasWhitespaceBefore = markerIndex == 0 || Character.isWhitespace(details.charAt(markerIndex - 1));
-        boolean hasWhitespaceAfter = markerEndIndex == details.length()
-                || Character.isWhitespace(details.charAt(markerEndIndex));
-        return hasWhitespaceBefore && hasWhitespaceAfter ? markerIndex : -1;
+    /**
+     * Validates that a parseable event start date/time is before its parseable end date/time.
+     *
+     * @param from raw event start text
+     * @param to raw event end text
+     * @throws KeefException when both values are parseable and the start is not earlier than the end
+     */
+    private static void validateEventDateOrder(String from, String to) throws KeefException {
+        Optional<LocalDateTime> parsedStart = Event.tryParseDateTime(from);
+        Optional<LocalDateTime> parsedEnd = Event.tryParseDateTime(to);
+        if (parsedStart.isEmpty() || parsedEnd.isEmpty()) {
+            return;
+        }
+        if (!parsedStart.get().isBefore(parsedEnd.get())) {
+            throw new KeefException("The event start date/time must be earlier than the end date/time.",
+                    "Use: event project meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00");
+        }
+    }
+
+    /**
+     * Counts the number of times a marker appears as a whitespace-delimited token.
+     *
+     * @param details text to inspect
+     * @param marker marker token to count
+     * @return number of valid marker occurrences
+     */
+    private static int countDelimitedMarkers(String details, String marker) {
+        int count = 0;
+        int searchFrom = 0;
+        while (searchFrom < details.length()) {
+            int markerIndex = details.indexOf(marker, searchFrom);
+            if (markerIndex < 0) {
+                break;
+            }
+            int markerEndIndex = markerIndex + marker.length();
+            boolean hasWhitespaceBefore = markerIndex == 0 || Character.isWhitespace(details.charAt(markerIndex - 1));
+            boolean hasWhitespaceAfter = markerEndIndex == details.length()
+                    || Character.isWhitespace(details.charAt(markerEndIndex));
+            if (hasWhitespaceBefore && hasWhitespaceAfter) {
+                count++;
+            }
+            searchFrom = markerIndex + marker.length();
+        }
+        return count;
     }
 
     /**
