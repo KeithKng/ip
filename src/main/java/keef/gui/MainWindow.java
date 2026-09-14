@@ -37,6 +37,7 @@ public class MainWindow extends AnchorPane {
     private final Image keefImage = new Image(MainWindow.class.getResourceAsStream("/images/DaDuke.png"));
     private final Storage storage = new Storage("data\\keef.txt");
     private TaskList tasks;
+    private boolean lastResponseWasError;
 
     /**
      * Initializes the task list and keeps new messages visible.
@@ -56,8 +57,9 @@ public class MainWindow extends AnchorPane {
         if (input.isEmpty()) {
             return;
         }
+        String response = process(input);
         dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage),
-                DialogBox.getKeefDialog(process(input), keefImage));
+                DialogBox.getKeefDialog(response, keefImage, lastResponseWasError));
         userInput.clear();
     }
 
@@ -70,6 +72,7 @@ public class MainWindow extends AnchorPane {
     }
 
     private String process(String input) {
+        lastResponseWasError = false;
         try {
             Parser.ParsedCommand parsedCommand = Parser.parse(input);
             return switch (parsedCommand.getCommand()) {
@@ -86,6 +89,7 @@ public class MainWindow extends AnchorPane {
                 case BYE -> closeWindow();
             };
         } catch (KeefException exception) {
+            lastResponseWasError = true;
             return exception.getUserMessage();
         }
     }

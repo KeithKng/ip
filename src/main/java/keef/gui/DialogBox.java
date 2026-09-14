@@ -58,12 +58,26 @@ public class DialogBox extends HBox {
      * @return Keef dialog box.
      */
     public static DialogBox getKeefDialog(String text, Image image) {
+        return getKeefDialog(text, image, false);
+    }
+
+    /** Creates a Keef response with optional error styling.
+     *
+     * @param text response text.
+     * @param image speaker image.
+     * @param isError whether the response reports an invalid command.
+     * @return Keef dialog box.
+     */
+    public static DialogBox getKeefDialog(String text, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(text, image);
         ObservableList<Node> children = FXCollections.observableArrayList(dialogBox.getChildren());
         Collections.reverse(children);
         dialogBox.getChildren().setAll(children);
         dialogBox.setAlignment(Pos.TOP_LEFT);
         dialogBox.dialog.getStyleClass().add("reply-label");
+        if (isError) {
+            dialogBox.dialog.getStyleClass().add("error-label");
+        }
         return dialogBox;
     }
 }
