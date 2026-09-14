@@ -16,11 +16,11 @@ import aster.task.TaskList;
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";
     private static final String BANNER =
-            " _  __         __\n"
-                    + "| |/ /___  ___ / _|\n"
-                    + "| ' // _ \\/ _ \\ |_ \n"
-                    + "| . \\  __/  __/  _|\n"
-                    + "|_|\\_\\___|\\___|_|\n";
+            "    _    ____ _____ _____ ____\n"
+                    + "   / \\  / ___|_   _| ____|  _ \\\n"
+                    + "  / _ \\ \\___ \\ | | |  _| | |_) |\n"
+                    + " / ___ \\ ___) || | | |___|  _ <\n"
+                    + "/_/   \\_\\____/ |_| |_____|_| \\_\\\n";
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
