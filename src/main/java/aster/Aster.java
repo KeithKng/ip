@@ -1,5 +1,7 @@
 package aster;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -228,6 +230,7 @@ public class Aster {
      * @param args command-line arguments (unused)
      */
     public static void main(String[] args) {
-        new Aster("data\\aster.txt").run();
+        Path storagePath = Paths.get("data", "aster.txt");
+        new Aster(storagePath.toString()).run();
     }
 }

@@ -1,5 +1,6 @@
 package aster.gui;
 
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -8,18 +9,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import aster.command.Parser;
+import aster.exception.AsterException;
+import aster.storage.Storage;
+import aster.task.Task;
+import aster.task.TaskList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
-import aster.command.Parser;
-import aster.exception.AsterException;
-import aster.storage.Storage;
-import aster.task.Task;
-import aster.task.TaskList;
 
 /**
  * Controls the tutorial-style conversation window for Aster.
@@ -37,7 +38,7 @@ public class MainWindow extends AnchorPane {
 
     private final Image userImage = loadImage("/images/default-user.png");
     private final Image asterImage = loadImage("/images/aster-bot.png");
-    private final Storage storage = new Storage("data\\aster.txt");
+    private final Storage storage = new Storage(Paths.get("data", "aster.txt").toString());
     private TaskList tasks;
     private boolean lastResponseWasError;
 
@@ -185,8 +186,7 @@ public class MainWindow extends AnchorPane {
     }
 
     private String closeWindow() {
-        Window window = getScene().getWindow();
-        window.hide();
+        Platform.exit();
         return "Until next time - keep your goals in orbit!";
     }
 }

@@ -1,9 +1,16 @@
 package aster.gui;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import aster.command.Command;
+import aster.command.Parser;
+import aster.exception.AsterException;
+import aster.storage.Storage;
+import aster.task.Task;
+import aster.task.TaskList;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,18 +21,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import aster.command.Command;
-import aster.command.Parser;
-import aster.exception.AsterException;
-import aster.storage.Storage;
-import aster.task.Task;
-import aster.task.TaskList;
 
 /**
  * Provides a JavaFX interface for entering Aster commands and viewing responses.
  */
 public class AsterGui extends Application {
-    private final Storage storage = new Storage("data\\aster.txt");
+    private final Storage storage = new Storage(Paths.get("data", "aster.txt").toString());
     private TaskList tasks;
     private TextArea conversation;
 
@@ -37,8 +38,10 @@ public class AsterGui extends Application {
     @Override
     public void start(Stage stage) {
         tasks = loadTasks();
-        conversation = new TextArea("Hello! I'm Aster, your stargazing task companion.\n"
-                + "Let's plot a clear course through your day.\n");
+        conversation = new TextArea("""
+                Hello! I'm Aster, your stargazing task companion.
+                Let's plot a clear course through your day.
+                """);
         conversation.setEditable(false);
         conversation.setWrapText(true);
 
